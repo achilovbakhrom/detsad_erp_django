@@ -1,5 +1,5 @@
 from django.db import models
-from base import SoftDelete, AuditableModel
+from .base import SoftDelete, AuditableModel
 
 class Company(SoftDelete):
     name = models.CharField(max_length=255, blank=True, default='')
@@ -19,7 +19,7 @@ class Group(SoftDelete):
     name = models.CharField(max_length=255, blank=True, default='')
     description = models.CharField(max_length=255, blank=True, default='')
 
-class Person(models.Model, SoftDelete):
+class Person(SoftDelete):
 
     class Meta:
         abstract = True
@@ -34,7 +34,7 @@ class Child(Person):
     pass
 
 class Responsible(Person):
-    child = models.ForeignKey(Child, null=False)
+    child = models.ForeignKey(Child, on_delete=models.CASCADE, null=False)
 
 class Position(SoftDelete):
     title = models.CharField(max_length=100, blank=True, default='')
@@ -49,7 +49,7 @@ class PaymentType(SoftDelete):
     name = models.CharField(max_length=100, blank=True, default='')
 
 class Employee(Person):
-    poisition = models.ForeignKey(Position)
+    poisition = models.ForeignKey(Position, on_delete=models.CASCADE, null=True)
     
 class GroupRegistration(SoftDelete, AuditableModel):
     class GroupRegistrationStatus(models.TextChoices):
@@ -58,7 +58,7 @@ class GroupRegistration(SoftDelete, AuditableModel):
     date  = models.DateTimeField(auto_now=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, null=True, default=None)
     status = models.CharField(
-        choices=GroupRegistrationStatus,
+        choices=GroupRegistrationStatus.choices,
         default=GroupRegistrationStatus.CREATED
     )
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True, default=None)
@@ -70,15 +70,15 @@ class ChildContract(SoftDelete, AuditableModel):
         ACTIVE = 'active', 'Active'
         PENDING = 'pending', 'Pending'
     date = models.DateTimeField(auto_now=True)
-    child = models.ForeignKey(Child, null=False)
-    subscription = models.DecimalField(null=True)
-    payment_type = models.ForeignKey(PaymentType, null=False)
+    child = models.ForeignKey(Child, null=False, on_delete=models.CASCADE)
+    subscription = models.DecimalField(null=True, decimal_places=2, max_digits=10)
+    payment_type = models.ForeignKey(PaymentType, null=False, on_delete=models.CASCADE)
     payment_date = models.DateField(null=True, default=None)
     status = models.CharField(
-        choices=ChildContractStatus,
+        choices=ChildContractStatus.choices,
         default=ChildContractStatus.CREATED
     )
-    group_registration = models.ForeignKey(GroupRegistration, null=True, default=None)
+    group_registration = models.ForeignKey(GroupRegistration, null=True, default=None, on_delete=models.CASCADE)
     description = models.CharField(max_length=255, null=True, default=None)
 
 class EmployeeContract(SoftDelete, AuditableModel):
@@ -87,19 +87,19 @@ class EmployeeContract(SoftDelete, AuditableModel):
         ACTIVE = 'active', 'Active'
         FINISHED = 'finished', 'Finished'
     date = models.DateTimeField(auto_now=True)
-    employee = models.ForeignKey(Employee, null=True, default=None)
-    position = models.ForeignKey(Position, null=True, default=None)
-    department = models.ForeignKey(Department, null=True, default=None)
-    salary = models.DecimalField(min=0, default=0.0)
-    branch = models.ForeignKey(Branch, null=True, default=None)
+    employee = models.ForeignKey(Employee, null=True, default=None, on_delete=models.CASCADE)
+    position = models.ForeignKey(Position, null=True, default=None, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, null=True, default=None, on_delete=models.CASCADE)
+    salary = models.DecimalField(default=0.0, decimal_places=2, max_digits=10)
+    branch = models.ForeignKey(Branch, null=True, default=None, on_delete=models.CASCADE)
     status = models.CharField(
-        choices=EmployeeContractStatus,
+        choices=EmployeeContractStatus.choices,
         default=EmployeeContractStatus.CREATED
     )
 
-class Cashbox(AuditableModel):
+class Salary(AuditableModel):
     date = models.DateTimeField(auto_now=True)
-    employee = models.ForeignKey(Employee, null=False)
+    employee = models.ForeignKey(Employee, null=False, on_delete=models.CASCADE)
     description = models.CharField(max_length=255, null=True, default=None)
 
 class Cashbox(AuditableModel):
@@ -107,9 +107,9 @@ class Cashbox(AuditableModel):
         INCOME = 'income', 'Income'
         EXPENSE = 'expense', 'Expense'
     date = models.DateTimeField(auto_now=True)
-    amount = models.DecimalField(min=0, default=0.0)
-    payment_type = models.ForeignKey(PaymentType, null=False)
-    reason = models.ForeignKey(Reason, null=False)
+    amount = models.DecimalField(default=0.0, decimal_places=2, max_digits=10)
+    payment_type = models.ForeignKey(PaymentType, null=False, on_delete=models.CASCADE)
+    reason = models.ForeignKey(Reason, null=False, on_delete=models.CASCADE)
     description = models.CharField(max_length=255, null=True, default=None)
-    transaction_type = models.CharField(choices=TransactionType, null=False)
+    transaction_type = models.CharField(choices=TransactionType.choices, null=False)
 
