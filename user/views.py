@@ -2,7 +2,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions
 from rest_framework.generics import ListAPIView
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiExample
 
 from core.base import ActivityLog
 from core.utils import get_client_ip
@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework import serializers
 
 
 @extend_schema(tags=['Users'])
@@ -41,6 +42,20 @@ class ManageUserView(generics.RetrieveAPIView):
 @extend_schema(tags=['Users'])
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+    @extend_schema(
+        examples=[
+            OpenApiExample(
+                "Example Request",
+                value={
+                    "username": "admin",
+                    "password": "admin123",
+                },
+            )
+        ],
+    )
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
 @extend_schema(tags=['Users'])
 class LogoutView(APIView):

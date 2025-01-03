@@ -38,4 +38,6 @@ urlpatterns = [
     path('api/v1/branch/', include('branch.urls'), name='branch'),
     path('api/v1/group/', include('group.urls'), name='group'),
     path('api/v1/child/', include('child.urls'), name='child'),
+    path('api/v1/child-contract/', include('child_contract.urls'), name='child_contract'),
+    path('api/v1/group-registration/', include('group_registration.urls'), name='group_registration')
 ]

@@ -1,5 +1,5 @@
 from django.db import models
-from .base import SoftDelete, AuditableModel
+from .base import SoftDelete, AuditableModel, User
 
 class Company(SoftDelete):
     name = models.CharField(max_length=255, blank=True, default='')
@@ -8,6 +8,18 @@ class Company(SoftDelete):
     mfo = models.CharField(max_length=50, blank=True, default='')
     jurisdical_address = models.CharField(max_length=255, blank=True, default='')
     description = models.CharField(max_length=255, blank=True, default='')
+
+class CompanyUserRelation(models.Model):
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, null=False, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'company')
+        verbose_name = 'User Company'
+        verbose_name_plural = 'User Companies'
+
+    def __str__(self):
+        return f'{self.user.username} - {self.company.name}'
 
 class Branch(SoftDelete):
     name = models.CharField(max_length=255, blank=True, default='')
@@ -18,6 +30,7 @@ class Branch(SoftDelete):
 class Group(SoftDelete):
     name = models.CharField(max_length=255, blank=True, default='')
     description = models.CharField(max_length=255, blank=True, default='')
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, default = None)
 
 class Person(SoftDelete):
 
