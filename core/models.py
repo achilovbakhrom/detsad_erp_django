@@ -44,7 +44,7 @@ class Person(SoftDelete):
     description = models.CharField(max_length=255, null=True, default=None)
 
 class Child(Person):
-    pass
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, default = None)
 
 class Responsible(Person):
     child = models.ForeignKey(Child, on_delete=models.CASCADE, null=False)
@@ -62,7 +62,7 @@ class PaymentType(SoftDelete):
     name = models.CharField(max_length=100, blank=True, default='')
 
 class Employee(Person):
-    poisition = models.ForeignKey(Position, on_delete=models.CASCADE, null=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, default = None)
     
 class GroupRegistration(SoftDelete, AuditableModel):
     class GroupRegistrationStatus(models.TextChoices):
@@ -126,3 +126,17 @@ class Cashbox(AuditableModel):
     description = models.CharField(max_length=255, null=True, default=None)
     transaction_type = models.CharField(choices=TransactionType.choices, null=False)
 
+class BaseUserCheck:
+    class Meta:
+        abstract = True
+
+    def company_belongs_to_user(self, user_id, company_id):
+        if company_id is None:
+            return (False, "The 'company_id' is a required parameter")
+        
+        companies = CompanyUserRelation.objects.filter(user_id=user_id, company_id=company_id)
+
+        if len(companies) == 0:
+            return (False, "'company_id' is not found for given 'user_id'")
+        
+        return (True, None)

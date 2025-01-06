@@ -4,15 +4,16 @@ from rest_framework import viewsets, permissions
 from core.pagination import CustomPagination
 from core.utils import error_response, success_response
 from .serializers import BranchSerializer
-from core.models import Branch, CompanyUserRelation
+from core.models import Branch, BaseUserCheck
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 from rest_framework.exceptions import NotFound, ValidationError
 from django.db.models import Q
 from rest_framework import status
 
+
 @extend_schema(tags=['Branch'])
-class BranchView(viewsets.ModelViewSet):
+class BranchView(viewsets.ModelViewSet, BaseUserCheck):
     serializer_class = BranchSerializer
     pagination_class = CustomPagination
     permission_classes = [permissions.IsAuthenticated]
@@ -37,17 +38,7 @@ class BranchView(viewsets.ModelViewSet):
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
-    
-    def company_belongs_to_user(self, user_id, company_id):
-        if company_id is None:
-            return (False, "The 'company_id' is a required parameter")
-        
-        companies = CompanyUserRelation.objects.filter(user_id=user_id, company_id=company_id)
 
-        if len(companies) == 0:
-            return (False, "'company_id' is not found for given 'user_id'")
-        
-        return (True, None)
     
     def get_queryset(self):
         request = self.request
@@ -55,16 +46,19 @@ class BranchView(viewsets.ModelViewSet):
         if request.method == "GET" and self.action == "list":
             
             company_id = request.query_params.get('company_id', None)
+            print(f'company id {company_id}')
             (belongs, err_msg) = self.company_belongs_to_user(user_id, company_id)
             if not belongs:
                 raise ValidationError({ "detail": err_msg })
             
             search = request.query_params.get('search', None)
             
-            queryset = Branch.objects.filter(company_id=company_id)
-
+            queryset = Branch.objects.filter(Q(company_id=company_id) & Q(is_deleted=False))
+            
             if search:
                 queryset = queryset.filter(Q(name__icontains=search))
+
+            return queryset
         elif request.method == "GET" and self.action == "retrieve":
             branch_id = self.kwargs.get('pk', None)
             try:

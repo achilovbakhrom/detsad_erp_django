@@ -1,9 +1,9 @@
-from core.models import Child, Company
+from core.models import Employee, Company
 from rest_framework import serializers
 
-
-class ChildSerializer(serializers.ModelSerializer):
+class EmployeeSerializer(serializers.ModelSerializer):
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all())
+
     class Meta:
-        model = Child
+        model = Employee
         fields = '__all__'
