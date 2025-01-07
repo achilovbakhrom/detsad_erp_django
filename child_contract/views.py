@@ -4,8 +4,6 @@ from rest_framework.permissions import IsAuthenticated
 
 from child_contract.serializers import CreateChildContractSerializer, ChildContractSerializer
 from core.models import ChildContract
-# Create your views here.
-
 
 @extend_schema(tags=['Child Contract'])
 class ChildContractView(ListAPIView):
