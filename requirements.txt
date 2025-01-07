@@ -73,3 +73,4 @@ djangorestframework-simplejwt==5.3.1
 drf-spectacular==0.27.2
 dj-database-url==2.2.0
 psycopg2==2.9.9
+pydash==8.0.4

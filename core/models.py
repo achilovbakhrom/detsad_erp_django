@@ -33,7 +33,6 @@ class Group(SoftDelete):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, default = None)
 
 class Person(SoftDelete):
-
     class Meta:
         abstract = True
 
@@ -103,7 +102,7 @@ class EmployeeContract(SoftDelete, AuditableModel):
     employee = models.ForeignKey(Employee, null=True, default=None, on_delete=models.CASCADE)
     position = models.ForeignKey(Position, null=True, default=None, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, null=True, default=None, on_delete=models.CASCADE)
-    salary = models.DecimalField(default=0.0, decimal_places=2, max_digits=10)
+    salary = models.DecimalField(default=0.0, decimal_places=2, max_digits=15)
     branch = models.ForeignKey(Branch, null=True, default=None, on_delete=models.CASCADE)
     status = models.CharField(
         choices=EmployeeContractStatus.choices,

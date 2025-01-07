@@ -46,7 +46,6 @@ class BranchView(viewsets.ModelViewSet, BaseUserCheck):
         if request.method == "GET" and self.action == "list":
             
             company_id = request.query_params.get('company_id', None)
-            print(f'company id {company_id}')
             (belongs, err_msg) = self.company_belongs_to_user(user_id, company_id)
             if not belongs:
                 raise ValidationError({ "detail": err_msg })

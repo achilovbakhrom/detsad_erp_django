@@ -41,5 +41,7 @@ urlpatterns = [
     path('api/v1/employee/', include('employee.urls'), name='employee'),
     path('api/v1/resources/', include('resources.urls'), name='resources'),
     path('api/v1/child-contract/', include('child_contract.urls'), name='child_contract'),
-    path('api/v1/group-registration/', include('group_registration.urls'), name='group_registration')
+    path('api/v1/group-registration/', include('group_registration.urls'), name='group_registration'),
+    path('api/v1/employee_contracts/', include('employee_contract.urls'), name='employee_contract')
+
 ]
