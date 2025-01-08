@@ -82,6 +82,7 @@ class ChildContract(SoftDelete, AuditableModel):
         ACTIVE = 'active', 'Active'
         PENDING = 'pending', 'Pending'
     date = models.DateTimeField(auto_now=True)
+    branch = models.ForeignKey(Branch, null=True, on_delete=models.CASCADE)
     child = models.ForeignKey(Child, null=False, on_delete=models.CASCADE)
     subscription = models.DecimalField(null=True, decimal_places=2, max_digits=10)
     payment_type = models.ForeignKey(PaymentType, null=False, on_delete=models.CASCADE)
