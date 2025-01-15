@@ -42,7 +42,7 @@ class CompanyView(viewsets.ModelViewSet):
             queryset = queryset.filter(
                 Q(name__icontains=search) | Q(inn__icontains=search)
             )
-        return queryset
+        return queryset.filter(is_deleted = False)
 
     def create(self, request, *args, **kwargs):
         user = request.user
