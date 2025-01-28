@@ -13,6 +13,50 @@ from rest_framework.response import Response
     tags=['Child Contract'],
     parameters=[
         OpenApiParameter(
+            name="company_id",
+            required=True,
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.QUERY,
+            description="filter by company_id"
+        ),
+        OpenApiParameter(
+            name="branch_id",
+            required=False,
+            type=OpenApiTypes.STR,
+            location=OpenApiParameter.QUERY,
+            description="filter by branch_id"
+        ),
+    ]
+)
+class ChildContractView(ListAPIView, BaseUserCheck):
+    permission_classes=[IsAuthenticated]
+    queryset = GroupRegistration.objects.all()
+    serializer_class = ChildContractSerializer
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        request = self.request
+        user_id = request.user.id
+        company_id = request.query_params.get('company_id', None)
+        (belongs, err_msg) = self.company_belongs_to_user(user_id=user_id, company_id=company_id)
+        if not belongs:
+            raise ValidationError({ "detail": err_msg })
+        
+        branch_id = request.query_params.get('branch_id', None)
+
+        if branch_id:
+            branches = [branch_id]
+        else:
+            branches = Branch.objects.filter(company_id=company_id).values_list("id", flat=True)
+        
+        queryset = ChildContract.objects.filter(Q(branch_id__in=branches) & Q(is_deleted=False))
+
+        return queryset
+
+@extend_schema(
+    tags=['Child Contract'],
+    parameters=[
+        OpenApiParameter(
             name="branch_id",
             required=False,
             type=OpenApiTypes.STR,
@@ -28,7 +72,7 @@ from rest_framework.response import Response
         ),
     ]
 )
-class ChildContractView(ListAPIView, BaseUserCheck):
+class ChildContractByParentView(ListAPIView, BaseUserCheck):
     queryset = ChildContract.objects.none()
     pagination_class = CustomPagination
     permission_classes = [IsAuthenticated]

@@ -6,8 +6,9 @@ app_name = 'child_contract'
 
 urlpatterns = [
     path('', views.ChildContractView.as_view(), name='child-contract'),
-    path('<int:id>/', views.RetrieveChildContractView.as_view(), name='child-contract'),
-    path('create/', views.CreateChildContractView.as_view(), name='child-contract'),
+    path('by-parent/', views.ChildContractByParentView.as_view(), name='child-contract-by-parent'),
+    path('<int:id>/', views.RetrieveChildContractView.as_view(), name='child-contract-by-id'),
+    path('create/', views.CreateChildContractView.as_view(), name='child-contract-create'),
     path('<int:id>/change-status/', views.ChildContractUpdateStatusView.as_view(), name='update-child-contract-status'),
     path('<int:id>/delete/', views.ChildContractDeleteView.as_view(), name='delete-child-contract'),
 ]
