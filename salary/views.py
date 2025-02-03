@@ -9,7 +9,6 @@ from drf_spectacular.types import OpenApiTypes
 from core.models import BaseUserCheck, Branch, Salary
 from core.pagination import CustomPagination
 from salary.serializers import CreateSalarySerializer, SalaryListSerializer
-from django.db.models import Q
 from rest_framework import status
 from core.utils import success_response, error_response
 
@@ -46,14 +45,7 @@ class SalaryView(ListAPIView, BaseUserCheck):
         if not belongs:
             raise ValidationError({ "detail": err_msg })
         
-        branch_id = request.query_params.get('branch_id', None)
-
-        if branch_id:
-            branches = [branch_id]
-        else:
-            branches = Branch.objects.filter(company_id=company_id).values_list("id", flat=True)
-        
-        queryset = Salary.objects.filter(Q(branch_id__in=branches) & Q(is_deleted=False))
+        queryset = Salary.objects.filter(company_id=company_id)
 
         return queryset
 
@@ -71,14 +63,12 @@ class CreateSalaryView(CreateAPIView, BaseUserCheck):
         (belongs, err_msg) = self.company_belongs_to_user(user_id, company_id)
         if not belongs:
             raise ValidationError({ "detail": err_msg })
-
-        serializer = self.get_serializer(data = body)
-
+        serializer = self.get_serializer(data=body)
         if not serializer.is_valid():
             return error_response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-        self.perform_create(serializer)
+        if serializer.is_valid:
+            self.perform_create(serializer)
 
         return success_response(serializer.data)
     

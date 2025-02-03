@@ -45,14 +45,7 @@ class CashboxListView(generics.ListAPIView, BaseUserCheck):
         if not belongs:
             raise ValidationError({ "detail": err_msg })
         
-        branch_id = request.query_params.get('branch_id', None)
-
-        if branch_id:
-            branches = [branch_id]
-        else:
-            branches = Branch.objects.filter(company_id=company_id).values_list("id", flat=True)
-        
-        queryset = Cashbox.objects.filter(Q(branch_id__in=branches) & Q(is_deleted=False))
+        queryset = Cashbox.objects.filter(company_id=company_id)
 
         return queryset
     

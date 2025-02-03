@@ -12,7 +12,7 @@ class SalaryListSerializer(serializers.ModelSerializer):
         model = Salary
         fields = '__all__'
 
-class CreateSalarySerializer(serializers.ModelField):
+class CreateSalarySerializer(serializers.ModelSerializer):
     date = serializers.DateTimeField(required=True)
     employee = serializers.PrimaryKeyRelatedField(queryset=EmployeeContract.objects.all(), required=True)
     company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), required=True)
