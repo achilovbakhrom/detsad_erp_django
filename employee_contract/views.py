@@ -1,7 +1,7 @@
 from rest_framework import generics
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
-from rest_framework.exceptions import ValidationError, NotFound
+from rest_framework.exceptions import ValidationError
 from core.models import BaseUserCheck, Branch, EmployeeContract
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated

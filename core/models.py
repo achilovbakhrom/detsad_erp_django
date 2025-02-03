@@ -67,7 +67,7 @@ class GroupRegistration(SoftDelete, AuditableModel):
     class GroupRegistrationStatus(models.TextChoices):
         CREATED = 'created', 'Created'
         ACTIVE = 'active', 'Active'
-    date  = models.DateTimeField(auto_now=True)
+    date  = models.DateTimeField(auto_now_add=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, null=True, default=None)
     status = models.CharField(
         choices=GroupRegistrationStatus.choices,
@@ -81,7 +81,7 @@ class ChildContract(SoftDelete, AuditableModel):
         CREATED = 'created', 'Created'
         ACTIVE = 'active', 'Active'
         PENDING = 'pending', 'Pending'
-    date = models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(auto_now_add=True)
     branch = models.ForeignKey(Branch, null=True, on_delete=models.CASCADE)
     child = models.ForeignKey(Child, null=False, on_delete=models.CASCADE)
     subscription = models.DecimalField(null=True, decimal_places=2, max_digits=10)
@@ -99,7 +99,7 @@ class EmployeeContract(SoftDelete, AuditableModel):
         CREATED = 'created', 'Created'
         ACTIVE = 'active', 'Active'
         FINISHED = 'finished', 'Finished'
-    date = models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(auto_now_add=True)
     employee = models.ForeignKey(Employee, null=True, default=None, on_delete=models.CASCADE)
     position = models.ForeignKey(Position, null=True, default=None, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, null=True, default=None, on_delete=models.CASCADE)
@@ -111,20 +111,30 @@ class EmployeeContract(SoftDelete, AuditableModel):
     )
 
 class Salary(AuditableModel):
-    date = models.DateTimeField(auto_now=True)
-    employee = models.ForeignKey(Employee, null=False, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+    employee = models.ForeignKey(EmployeeContract, null=True, on_delete=models.CASCADE, related_name="salaries")
     description = models.CharField(max_length=255, null=True, default=None)
+    company = models.ForeignKey(Company, null=True, on_delete=models.CASCADE)
 
 class Cashbox(AuditableModel):
     class TransactionType(models.TextChoices):
         INCOME = 'income', 'Income'
         EXPENSE = 'expense', 'Expense'
-    date = models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(auto_now_add=True)
     amount = models.DecimalField(default=0.0, decimal_places=2, max_digits=10)
     payment_type = models.ForeignKey(PaymentType, null=False, on_delete=models.CASCADE)
     reason = models.ForeignKey(Reason, null=False, on_delete=models.CASCADE)
     description = models.CharField(max_length=255, null=True, default=None)
     transaction_type = models.CharField(choices=TransactionType.choices, null=False)
+    company = models.ForeignKey(Company, null=True, on_delete=models.CASCADE)
+    child = models.ForeignKey(ChildContract, null=True, on_delete=models.CASCADE)
+
+class SickLeave(AuditableModel):
+    date = models.DateTimeField(auto_now_add=True)
+    child = models.ForeignKey(ChildContract, null=False, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, null=True, on_delete=models.CASCADE)
+    has_reason = models.BooleanField(null=False, default=False)
+    description = models.CharField(max_length=255, null=True, default=None)
 
 class BaseUserCheck:
     class Meta:
@@ -140,3 +150,5 @@ class BaseUserCheck:
             return (False, "'company_id' is not found for given 'user_id'")
         
         return (True, None)
+
+

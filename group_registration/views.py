@@ -1,5 +1,5 @@
-import json
-from rest_framework.generics import ListAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
+from django.shortcuts import get_object_or_404
+from rest_framework.generics import ListAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView, RetrieveAPIView
 from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 
@@ -69,7 +69,6 @@ class CreateGroupRegistrationView(CreateAPIView):
     queryset = GroupRegistration.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = CreateGroupRegistrationDTO
-    
 
     def post(self, request, *args, **kwargs):
         body = request.data
@@ -125,3 +124,31 @@ class GroupRegistrationDeleteView(DestroyAPIView):
         registration.save()
         ChildContract.objects.filter(id=id).update(status='pending')
         return super().destroy(request, *args, **kwargs)
+    
+@extend_schema(tags=['Group Registration'])
+class GroupRegistrationRetrieveView(RetrieveAPIView):
+    permission_classes=[IsAuthenticated]
+    queryset = GroupRegistration.objects.all()
+    serializer_class = GroupRegistrationListSerializer
+    lookup_field = 'id'
+
+@extend_schema(tags=['Group Registration'])
+class UpdateGroupRegistrationView(UpdateAPIView):
+    queryset = GroupRegistration.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = CreateGroupRegistrationSerializer
+
+    def put(self, request, *args, **kwargs):
+        id = self.kwargs.get('id', None)
+        registration = get_object_or_404(GroupRegistration, id=id)
+        
+        serializer = self.get_serializer(instance=registration, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            
+            serializer.save()  # Saves all validated fields, including `date`
+            group_serializer = GroupRegistrationListSerializer(instance=serializer.instance)
+            return Response(group_serializer.data)
+        
+        raise ValidationError({"detail": serializer.errors})
+    
