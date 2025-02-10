@@ -62,6 +62,10 @@ class PaymentType(SoftDelete):
 
 class Employee(Person):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, default = None)
+
+class Account(SoftDelete, AuditableModel):
+    name = models.CharField(max_length=50, blank=False, null=False)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, default = None)
     
 class GroupRegistration(SoftDelete, AuditableModel):
     class GroupRegistrationStatus(models.TextChoices):
@@ -135,6 +139,17 @@ class SickLeave(AuditableModel):
     company = models.ForeignKey(Company, null=True, on_delete=models.CASCADE)
     has_reason = models.BooleanField(null=False, default=False)
     description = models.CharField(max_length=255, null=True, default=None)
+
+class Transaction(AuditableModel):
+    class TransactionType(models.TextChoices):
+        INCOME = 'income', 'Income'
+        EXPENSE = 'expense', 'Expense'
+    date = models.DateTimeField(auto_now_add=True)
+    amount = models.DecimalField(default=0.0, decimal_places=2, max_digits=10)
+    payment_type = models.ForeignKey(PaymentType, null=False, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, null=False, on_delete=models.CASCADE)
+    description = models.CharField(max_length=255, null=True, default=None)
+    company = models.ForeignKey(Company, null=True, on_delete=models.CASCADE)
 
 class BaseUserCheck:
     class Meta:

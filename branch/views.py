@@ -51,7 +51,7 @@ class BranchView(viewsets.ModelViewSet, BaseUserCheck):
                 raise ValidationError({ "detail": err_msg })
             
             search = request.query_params.get('search', None)
-            
+
             queryset = Branch.objects.filter(Q(company_id=company_id) & Q(is_deleted=False))
             
             if search:

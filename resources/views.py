@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 
-from core.models import Department, PaymentType, Position, Reason
+from core.models import Account, Department, PaymentType, Position, Reason
 from core.pagination import CustomPagination
-from resources.serializers import DepartmentSerializer, PaymentTypeSerializer, PositionSerializer, ReasonSerializer
+from resources.serializers import AccountSerializer, DepartmentSerializer, PaymentTypeSerializer, PositionSerializer, ReasonSerializer
 from rest_framework import permissions
 from drf_spectacular.utils import extend_schema
 
@@ -38,5 +38,9 @@ class DepartmentView(BaseResourceView):
 class PaymentTypeView(BaseResourceView):
     serializer_class = PaymentTypeSerializer
     queryset = PaymentType.objects.filter(is_deleted=False)
+
+class AccountView(BaseResourceView):
+    serializer_class = AccountSerializer
+    queryset = Account.objects.filter(is_deleted=False)
 
     

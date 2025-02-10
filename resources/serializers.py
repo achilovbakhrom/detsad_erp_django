@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Department, PaymentType, Position, Reason
+from core.models import Account, Department, PaymentType, Position, Reason
 
 class PositionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,4 +20,9 @@ class DepartmentSerializer(serializers.ModelSerializer):
 class PaymentTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentType
+        fields = '__all__'
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
         fields = '__all__'

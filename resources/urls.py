@@ -10,6 +10,7 @@ router.register(r'position', views.PositionView)
 router.register(r'reason', views.ReasonView)
 router.register(r'department', views.DepartmentView)
 router.register(r'payment_type', views.PaymentTypeView)
+router.register(r'account', views.AccountView)
 
 urlpatterns = [
     path('', include(router.urls)),
