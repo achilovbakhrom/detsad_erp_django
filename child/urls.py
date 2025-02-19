@@ -4,10 +4,8 @@ from . import views
 
 app_name = 'child'
 
-router = DefaultRouter()
-
-router.register('', views.ChildView)
-
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', views.ChildListView.as_view()),
+    path('<int:id>/', views.ChildRetrieveDestroyView.as_view()),
+    path('<int:id>/edit/', views.ChildEditView.as_view()),
 ]

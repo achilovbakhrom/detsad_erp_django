@@ -1,19 +1,19 @@
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
-from rest_framework import generics
-from cashbox.serializers import CashboxSerializer, CreateCashboxSerializer
-from core.models import BaseUserCheck, Cashbox
+from jsonschema import ValidationError
+from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import ValidationError
-from core.models import Branch, Cashbox
-from django.db.models import Q
-from rest_framework import status
-from core.utils import error_response, success_response
 
+from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
+
+from core.models import BaseUserCheck, Transaction
 from core.pagination import CustomPagination
+from rest_framework import status
+from core.utils import success_response, error_response
+from transaction.serializer import CreateTransactionSerializer, TransactionSerializer
 
 @extend_schema(
-    tags=['Cashbox'],
+    tags=['Transaction'],
     parameters=[
         OpenApiParameter(
             name="company_id",
@@ -31,11 +31,11 @@ from core.pagination import CustomPagination
         ),
     ]
 )
-class CashboxListView(generics.ListAPIView, BaseUserCheck):
-    queryset=Cashbox.objects.none()
+class TransactionView(ListAPIView, BaseUserCheck):
     permission_classes=[IsAuthenticated]
-    serializer_class=CashboxSerializer
-    pagination_class=CustomPagination
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+    pagination_class = CustomPagination
 
     def get_queryset(self):
         request = self.request
@@ -45,15 +45,16 @@ class CashboxListView(generics.ListAPIView, BaseUserCheck):
         if not belongs:
             raise ValidationError({ "detail": err_msg })
         
-        queryset = Cashbox.objects.filter(company_id=company_id)
+        queryset = Transaction.objects.filter(company_id=company_id)
 
         return queryset
-    
-@extend_schema(tags=['Cashbox'])
-class CreateCashboxeView(generics.CreateAPIView, BaseUserCheck):
-    queryset = Cashbox.objects.all()
+
+
+@extend_schema(tags=['Transaction'])
+class CreateTransactionView(CreateAPIView, BaseUserCheck):
+    queryset = Transaction.objects.all()
     permission_classes = [IsAuthenticated]
-    serializer_class = CreateCashboxSerializer
+    serializer_class = CreateTransactionSerializer
 
     def post(self, request, *args, **kwargs):
         user_id = request.user.id
@@ -73,24 +74,25 @@ class CreateCashboxeView(generics.CreateAPIView, BaseUserCheck):
 
         return success_response(serializer.data)
     
-@extend_schema(tags=['Cashbox'])
-class RetrieveCashboxView(generics.RetrieveAPIView):
-    queryset = Cashbox.objects.all()
+@extend_schema(tags=['Transaction'])
+class RetrieveTransactionView(RetrieveAPIView):
+    queryset = Transaction.objects.all()
     permission_classes = [IsAuthenticated]
-    serializer_class = CashboxSerializer
+    serializer_class = TransactionSerializer
     lookup_field = 'id'
 
-@extend_schema(tags=['Cashbox'])
-class CashboxDeleteView(generics.DestroyAPIView, BaseUserCheck):
-    queryset = Cashbox.objects.all()
+@extend_schema(tags=['Transaction'])
+class TransactionDeleteView(DestroyAPIView, BaseUserCheck):
+    queryset = Transaction.objects.all()
     permission_classes = [IsAuthenticated]
+    serializer_class = TransactionSerializer
     lookup_field = 'id'
 
     def destroy(self, request, *args, **kwargs):
         user_id = request.user.id
         id = kwargs.get('id')
-        cashbox = Cashbox.objects.get(id=id)
-        company_id = cashbox.company.id
+        tx = Transaction.objects.get(id=id)
+        company_id = tx.company.id
         (belongs, err_msg) = self.company_belongs_to_user(user_id, company_id)
         if not belongs:
             raise ValidationError({ "detail": err_msg })

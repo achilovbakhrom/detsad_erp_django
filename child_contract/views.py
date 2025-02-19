@@ -143,6 +143,7 @@ class ChildContractUpdateStatusView(UpdateAPIView, BaseUserCheck):
 class ChildContractDeleteView(DestroyAPIView):
     queryset = ChildContract.objects.all()
     permission_classes = [IsAuthenticated]
+    serializer_class = ChildContractSerializer
     lookup_field = 'id'
 
     def destroy(self, request, *args, **kwargs):

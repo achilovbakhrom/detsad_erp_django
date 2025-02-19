@@ -1,13 +1,11 @@
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
 from . import views
 
 app_name = 'branch'
 
-router = DefaultRouter()
-
-router.register('', views.BranchView)
-
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', views.BranchListView.as_view()),
+    path('create/', views.BranchCreateView.as_view()),
+    path('<int:id>/', views.BranchRetrieveDestroyView.as_view()),
+    path('<int:id>/edit/', views.BranchEditView.as_view()),
 ]

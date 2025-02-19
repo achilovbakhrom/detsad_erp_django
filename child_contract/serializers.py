@@ -24,3 +24,7 @@ class ChildContractSerializer(serializers.ModelSerializer):
 
 class ChangeStatusSelrializer(serializers.Serializer):
     status = serializers.CharField(required=True)
+
+    class Meta:
+        model = ChildContract
+        fields = '__all__'

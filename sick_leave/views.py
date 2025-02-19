@@ -86,6 +86,7 @@ class RetrieveSickLeaveView(RetrieveAPIView):
 class SickLeaveDeleteView(DestroyAPIView, BaseUserCheck):
     queryset = SickLeave.objects.all()
     permission_classes = [IsAuthenticated]
+    serializer_class = SickLeaveListSerializer
     lookup_field = 'id'
 
     def destroy(self, request, *args, **kwargs):

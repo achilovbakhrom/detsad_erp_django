@@ -83,6 +83,7 @@ class RetrieveSalaryView(RetrieveAPIView):
 class SalaryDeleteView(DestroyAPIView, BaseUserCheck):
     queryset = Salary.objects.all()
     permission_classes = [IsAuthenticated]
+    serializer_class = SalaryListSerializer
     lookup_field = 'id'
 
     def destroy(self, request, *args, **kwargs):
