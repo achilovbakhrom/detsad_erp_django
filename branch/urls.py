@@ -3,6 +3,13 @@ from . import views
 
 app_name = 'branch'
 
+<<<<<<< Updated upstream
+=======
+router = DefaultRouter()
+
+router.register('', views.BranchView, basename='branch')
+
+>>>>>>> Stashed changes
 urlpatterns = [
     path('', views.BranchListView.as_view()),
     path('create/', views.BranchCreateView.as_view()),

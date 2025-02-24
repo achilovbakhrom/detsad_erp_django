@@ -1,8 +1,0 @@
-{
-    "pylint.args": [
-        "--load-plugins"
-    ],
-    "[python]": {
-
-    }
-}
