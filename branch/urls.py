@@ -1,18 +1,11 @@
-from django.urls import path, include
+from django.urls import path
 from . import views
 
 app_name = 'branch'
 
-<<<<<<< Updated upstream
-=======
-router = DefaultRouter()
-
-router.register('', views.BranchView, basename='branch')
-
->>>>>>> Stashed changes
 urlpatterns = [
-    path('', views.BranchListView.as_view()),
-    path('create/', views.BranchCreateView.as_view()),
-    path('<int:id>/', views.BranchRetrieveDestroyView.as_view()),
-    path('<int:id>/edit/', views.BranchEditView.as_view()),
+    path('', views.BranchListView.as_view(), name='branch-list'),
+    path('create/', views.BranchCreateView.as_view(), name='branch-create'),
+    path('<int:id>/', views.BranchRetrieveDestroyView.as_view(), name='branch-detail'),
+    path('<int:id>/edit/', views.BranchEditView.as_view(), name='branch-edit'),
 ]
