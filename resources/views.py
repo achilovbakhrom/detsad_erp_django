@@ -1,46 +1,65 @@
+from requests import Response
 from rest_framework import viewsets
 
+from core.mixins import NonDeletedFilterMixin, TenantFilterMixin
 from core.models import Account, Department, PaymentType, Position, Reason
 from core.pagination import CustomPagination
-from resources.serializers import AccountSerializer, DepartmentSerializer, PaymentTypeSerializer, PositionSerializer, ReasonSerializer
+from core.permissions import HasTenantIdPermission
+from resources.serializers import AccountInputSerializer, AccountSerializer, DepartmentInputSerializer, DepartmentSerializer, PaymentTypeInputSerializer, PaymentTypeSerializer, PositionInputSerializer, PositionSerializer, ReasonInputSerializer, ReasonSerializer
 from rest_framework import permissions
 from drf_spectacular.utils import extend_schema
+from rest_framework import status
 
 @extend_schema(tags=['Resources'])
-class BaseResourceView(viewsets.ModelViewSet):
+class BaseResourceView(NonDeletedFilterMixin, TenantFilterMixin, viewsets.ModelViewSet):
     pagination_class = CustomPagination
-    permission_classes = [permissions.IsAuthenticated]
-    
+    permission_classes = [permissions.IsAuthenticated, HasTenantIdPermission]
+    http_method_names = ['get', 'post', 'delete', 'put']    
     class Meta:
         abstract = True
 
     @extend_schema(exclude=True)
-    def partial_update(self, request, *args, **kwargs):
-        return super().partial_update(request, *args, **kwargs)
-    
-    @extend_schema(exclude=True)
     def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
-    
+        return Response({"detail": "Method Not Allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 class PositionView(BaseResourceView):
-    serializer_class = PositionSerializer
-    queryset = Position.objects.filter(is_deleted=False)
+    queryset = Position.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST' or self.request.method == 'PUT':
+            return PositionInputSerializer
+        return PositionSerializer
 
 class ReasonView(BaseResourceView):
-    serializer_class = ReasonSerializer
-    queryset = Reason.objects.filter(is_deleted=False)
+    queryset = Reason.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST' or self.request.method == 'PUT':
+            return ReasonInputSerializer
+        return ReasonSerializer
 
 class DepartmentView(BaseResourceView):
-    serializer_class = DepartmentSerializer
-    queryset = Department.objects.filter(is_deleted=False)
+    queryset = Department.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST' or self.request.method == 'PUT':
+            return DepartmentInputSerializer
+        return DepartmentSerializer
 
 class PaymentTypeView(BaseResourceView):
-    serializer_class = PaymentTypeSerializer
-    queryset = PaymentType.objects.filter(is_deleted=False)
+    queryset = PaymentType.objects.all()
+    
+    def get_serializer_class(self):
+        if self.request.method == 'POST' or self.request.method == 'PUT':
+            return PaymentTypeInputSerializer
+        return PaymentTypeSerializer
 
 class AccountView(BaseResourceView):
-    serializer_class = AccountSerializer
-    queryset = Account.objects.filter(is_deleted=False)
+    queryset = Account.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST' or self.request.method == 'PUT':
+            return AccountInputSerializer
+        return AccountSerializer
 
     

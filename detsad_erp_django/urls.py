@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import (
     SpectacularAPIView,
-    SpectacularSwaggerView
+    SpectacularSwaggerView,
+    SpectacularRedocView
 )
 
 
@@ -31,6 +32,7 @@ urlpatterns = [
         SpectacularSwaggerView.as_view(url_name='api-schema'),
         name='api-docs',
     ),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='api-schema'), name='redoc'),
     path('api/v1/user/', include('user.urls'), name='user'),
     path('api/v1/company/', include('company.urls'), name='company'),
     path('api/v1/branch/', include('branch.urls'), name='branch'),
@@ -43,5 +45,6 @@ urlpatterns = [
     path('api/v1/employee-contracts/', include('employee_contract.urls'), name='employee_contract'),
     path('api/v1/sick-leave/', include('sick_leave.urls'), name="sick_leave"),
     path('api/v1/salary/', include('salary.urls'), name="salary"),
-    path('api/v1/cashbox/', include('cashbox.urls'), name="cashbox"),
+    path('api/v1/transaction/', include('transaction.urls'), name="transaction"),
+    path('api/v1/subscription/', include('subscription.urls'), name="subscription"),
 ]

@@ -1,0 +1,4188 @@
+openapi: 3.0.3
+info:
+  title: Detsad ERP API
+  version: 1.0.0
+  description: API Documentation
+paths:
+  /api/v1/branch/:
+    get:
+      operationId: v1_branch_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Search by name or inn
+      tags:
+      - Branch
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBranchList'
+          description: ''
+    post:
+      operationId: v1_branch_create
+      tags:
+      - Branch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Branch'
+          description: ''
+  /api/v1/branch/{id}/:
+    get:
+      operationId: v1_branch_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this branch.
+        required: true
+      tags:
+      - Branch
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Branch'
+          description: ''
+    put:
+      operationId: v1_branch_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this branch.
+        required: true
+      tags:
+      - Branch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BranchRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Branch'
+          description: ''
+    patch:
+      operationId: v1_branch_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this branch.
+        required: true
+      tags:
+      - Branch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBranchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBranchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBranchRequest'
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Branch'
+          description: ''
+    delete:
+      operationId: v1_branch_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this branch.
+        required: true
+      tags:
+      - Branch
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/child/:
+    get:
+      operationId: v1_child_list
+      parameters:
+      - in: query
+        name: company_id
+        schema:
+          type: string
+        description: filter by company_id
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Search by name or inn
+      tags:
+      - Children
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedChildList'
+          description: ''
+    post:
+      operationId: v1_child_create
+      tags:
+      - Children
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChildRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChildRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChildRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Child'
+          description: ''
+  /api/v1/child-contract/:
+    get:
+      operationId: v1_child_contract_list
+      parameters:
+      - in: query
+        name: branch_id
+        schema:
+          type: string
+        description: filter by branch_id
+      - in: query
+        name: company_id
+        schema:
+          type: string
+        description: filter by company_id
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Child Contract
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedChildContractList'
+          description: ''
+  /api/v1/child-contract/{id}/:
+    get:
+      operationId: v1_child_contract_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Child Contract
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChildContract'
+          description: ''
+  /api/v1/child-contract/{id}/change-status/:
+    put:
+      operationId: v1_child_contract_change_status_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Child Contract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeStatusSelrializerRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChangeStatusSelrializerRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChangeStatusSelrializerRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangeStatusSelrializer'
+          description: ''
+  /api/v1/child-contract/{id}/delete/:
+    delete:
+      operationId: v1_child_contract_delete_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Child Contract
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/child-contract/by-parent/:
+    get:
+      operationId: v1_child_contract_by_parent_list
+      parameters:
+      - in: query
+        name: branch_id
+        schema:
+          type: string
+        description: filter by branch_id
+      - in: query
+        name: group_registration_id
+        schema:
+          type: string
+        description: filter by group_registration_id
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Child Contract
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedChildContractList'
+          description: ''
+  /api/v1/child-contract/create/:
+    post:
+      operationId: v1_child_contract_create_create
+      tags:
+      - Child Contract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChildContractRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateChildContractRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateChildContractRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateChildContract'
+          description: ''
+  /api/v1/child/{id}/:
+    get:
+      operationId: v1_child_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this child.
+        required: true
+      tags:
+      - Children
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Child'
+          description: ''
+    put:
+      operationId: v1_child_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this child.
+        required: true
+      tags:
+      - Children
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChildRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChildRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChildRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Child'
+          description: ''
+    patch:
+      operationId: v1_child_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this child.
+        required: true
+      tags:
+      - Children
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedChildRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedChildRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedChildRequest'
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Child'
+          description: ''
+    delete:
+      operationId: v1_child_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this child.
+        required: true
+      tags:
+      - Children
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/company/:
+    get:
+      operationId: v1_company_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Search by name or inn
+      tags:
+      - Company
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCompanyList'
+          description: ''
+    post:
+      operationId: v1_company_create
+      tags:
+      - Company
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CompanyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CompanyRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+  /api/v1/company/{id}/:
+    get:
+      operationId: v1_company_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company.
+        required: true
+      tags:
+      - Company
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+    put:
+      operationId: v1_company_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company.
+        required: true
+      tags:
+      - Company
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CompanyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CompanyRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+    patch:
+      operationId: v1_company_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company.
+        required: true
+      tags:
+      - Company
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCompanyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCompanyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCompanyRequest'
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+          description: ''
+    delete:
+      operationId: v1_company_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company.
+        required: true
+      tags:
+      - Company
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/employee/:
+    get:
+      operationId: v1_employee_list
+      parameters:
+      - in: query
+        name: company_id
+        schema:
+          type: string
+        description: filter by company_id
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Search by name or inn
+      tags:
+      - Employee
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEmployeeList'
+          description: ''
+    post:
+      operationId: v1_employee_create
+      tags:
+      - Employee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+          description: ''
+  /api/v1/employee-contracts/{id}/:
+    get:
+      operationId: v1_employee_contracts_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Employee Contract
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeContract'
+          description: ''
+  /api/v1/employee-contracts/{id}/delete/:
+    delete:
+      operationId: v1_employee_contracts_delete_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Employee Contract
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/employee-contracts/{id}/fire/:
+    delete:
+      operationId: v1_employee_contracts_fire_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Employee Contract
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/employee-contracts/{id}/hire/:
+    put:
+      operationId: v1_employee_contracts_hire_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Employee Contract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeContractRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmployeeContractRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmployeeContractRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeContract'
+          description: ''
+  /api/v1/employee-contracts/create/:
+    post:
+      operationId: v1_employee_contracts_create_create
+      tags:
+      - Employee Contract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEmployeeContractRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateEmployeeContractRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateEmployeeContractRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateEmployeeContract'
+          description: ''
+  /api/v1/employee-contracts/list/:
+    get:
+      operationId: v1_employee_contracts_list_list
+      parameters:
+      - in: query
+        name: branch_id
+        schema:
+          type: string
+        description: filter by branch_id
+      - in: query
+        name: company_id
+        schema:
+          type: string
+        description: filter by company_id
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Employee Contract
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEmployeeContractList'
+          description: ''
+  /api/v1/employee/{id}/:
+    get:
+      operationId: v1_employee_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this employee.
+        required: true
+      tags:
+      - Employee
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+          description: ''
+    put:
+      operationId: v1_employee_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this employee.
+        required: true
+      tags:
+      - Employee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+          description: ''
+    patch:
+      operationId: v1_employee_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this employee.
+        required: true
+      tags:
+      - Employee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployeeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployeeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEmployeeRequest'
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+          description: ''
+    delete:
+      operationId: v1_employee_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this employee.
+        required: true
+      tags:
+      - Employee
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/group/:
+    get:
+      operationId: v1_group_list
+      parameters:
+      - in: query
+        name: company_id
+        schema:
+          type: string
+        description: filter by company_id
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Search by name or inn
+      tags:
+      - Group
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedGroupList'
+          description: ''
+    post:
+      operationId: v1_group_create
+      tags:
+      - Group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+  /api/v1/group-registration/:
+    get:
+      operationId: v1_group_registration_list
+      parameters:
+      - in: query
+        name: branch_id
+        schema:
+          type: string
+        description: filter by branch_id
+      - in: query
+        name: company_id
+        schema:
+          type: string
+        description: filter by company_id
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Group Registration
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedGroupRegistrationListList'
+          description: ''
+  /api/v1/group-registration/{id}/:
+    get:
+      operationId: v1_group_registration_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Group Registration
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupRegistrationList'
+          description: ''
+  /api/v1/group-registration/{id}/change-status/:
+    put:
+      operationId: v1_group_registration_change_status_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Group Registration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupRegistrationUpdateStatusRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GroupRegistrationUpdateStatusRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GroupRegistrationUpdateStatusRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupRegistrationUpdateStatus'
+          description: ''
+  /api/v1/group-registration/{id}/delete/:
+    delete:
+      operationId: v1_group_registration_delete_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Group Registration
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/group-registration/{id}/update/:
+    put:
+      operationId: v1_group_registration_update_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Group Registration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGroupRegistrationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateGroupRegistrationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateGroupRegistrationRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateGroupRegistration'
+          description: ''
+    patch:
+      operationId: v1_group_registration_update_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Group Registration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCreateGroupRegistrationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCreateGroupRegistrationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCreateGroupRegistrationRequest'
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateGroupRegistration'
+          description: ''
+  /api/v1/group-registration/create/:
+    post:
+      operationId: v1_group_registration_create_create
+      tags:
+      - Group Registration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGroupRegistrationDTORequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateGroupRegistrationDTORequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateGroupRegistrationDTORequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateGroupRegistrationDTO'
+          description: ''
+  /api/v1/group/{id}/:
+    get:
+      operationId: v1_group_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company.
+        required: true
+      tags:
+      - Group
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+    put:
+      operationId: v1_group_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company.
+        required: true
+      tags:
+      - Group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+    patch:
+      operationId: v1_group_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company.
+        required: true
+      tags:
+      - Group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGroupRequest'
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: ''
+    delete:
+      operationId: v1_group_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this company.
+        required: true
+      tags:
+      - Group
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/resources/account/:
+    get:
+      operationId: v1_resources_account_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Resources
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAccountList'
+          description: ''
+    post:
+      operationId: v1_resources_account_create
+      tags:
+      - Resources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+          description: ''
+  /api/v1/resources/account/{id}/:
+    put:
+      operationId: v1_resources_account_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this account.
+        required: true
+      tags:
+      - Resources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+          description: ''
+    delete:
+      operationId: v1_resources_account_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this account.
+        required: true
+      tags:
+      - Resources
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/resources/department/:
+    get:
+      operationId: v1_resources_department_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Resources
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDepartmentList'
+          description: ''
+    post:
+      operationId: v1_resources_department_create
+      tags:
+      - Resources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+          description: ''
+  /api/v1/resources/department/{id}/:
+    put:
+      operationId: v1_resources_department_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this department.
+        required: true
+      tags:
+      - Resources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+          description: ''
+    delete:
+      operationId: v1_resources_department_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this department.
+        required: true
+      tags:
+      - Resources
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/resources/payment_type/:
+    get:
+      operationId: v1_resources_payment_type_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Resources
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPaymentTypeList'
+          description: ''
+    post:
+      operationId: v1_resources_payment_type_create
+      tags:
+      - Resources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentTypeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentTypeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentTypeRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentType'
+          description: ''
+  /api/v1/resources/payment_type/{id}/:
+    put:
+      operationId: v1_resources_payment_type_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this payment type.
+        required: true
+      tags:
+      - Resources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentTypeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentTypeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentTypeRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentType'
+          description: ''
+    delete:
+      operationId: v1_resources_payment_type_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this payment type.
+        required: true
+      tags:
+      - Resources
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/resources/position/:
+    get:
+      operationId: v1_resources_position_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Resources
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPositionList'
+          description: ''
+    post:
+      operationId: v1_resources_position_create
+      tags:
+      - Resources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PositionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PositionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PositionRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Position'
+          description: ''
+  /api/v1/resources/position/{id}/:
+    put:
+      operationId: v1_resources_position_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this position.
+        required: true
+      tags:
+      - Resources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PositionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PositionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PositionRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Position'
+          description: ''
+    delete:
+      operationId: v1_resources_position_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this position.
+        required: true
+      tags:
+      - Resources
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/resources/reason/:
+    get:
+      operationId: v1_resources_reason_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Resources
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedReasonList'
+          description: ''
+    post:
+      operationId: v1_resources_reason_create
+      tags:
+      - Resources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReasonRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReasonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReasonRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reason'
+          description: ''
+  /api/v1/resources/reason/{id}/:
+    put:
+      operationId: v1_resources_reason_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this reason.
+        required: true
+      tags:
+      - Resources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReasonRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReasonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReasonRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reason'
+          description: ''
+    delete:
+      operationId: v1_resources_reason_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this reason.
+        required: true
+      tags:
+      - Resources
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/salary/:
+    get:
+      operationId: v1_salary_list
+      parameters:
+      - in: query
+        name: branch_id
+        schema:
+          type: string
+        description: filter by branch_id
+      - in: query
+        name: company_id
+        schema:
+          type: string
+        description: filter by company_id
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Salary
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSalaryListList'
+          description: ''
+  /api/v1/salary/{id}/:
+    get:
+      operationId: v1_salary_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Salary
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalaryList'
+          description: ''
+  /api/v1/salary/{id}/delete/:
+    delete:
+      operationId: v1_salary_delete_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Salary
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/salary/create/:
+    post:
+      operationId: v1_salary_create_create
+      tags:
+      - Salary
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSalaryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateSalaryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateSalaryRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSalary'
+          description: ''
+  /api/v1/sick-leave/:
+    get:
+      operationId: v1_sick_leave_list
+      parameters:
+      - in: query
+        name: branch_id
+        schema:
+          type: string
+        description: filter by branch_id
+      - in: query
+        name: company_id
+        schema:
+          type: string
+        description: filter by company_id
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Sick Leave
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSickLeaveListList'
+          description: ''
+  /api/v1/sick-leave/{id}/:
+    get:
+      operationId: v1_sick_leave_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Sick Leave
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SickLeaveList'
+          description: ''
+  /api/v1/sick-leave/{id}/delete/:
+    delete:
+      operationId: v1_sick_leave_delete_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Sick Leave
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/sick-leave/create/:
+    post:
+      operationId: v1_sick_leave_create_create
+      tags:
+      - Sick Leave
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSickLeaveRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateSickLeaveRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateSickLeaveRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSickLeave'
+          description: ''
+  /api/v1/transaction/:
+    get:
+      operationId: v1_transaction_list
+      parameters:
+      - in: query
+        name: branch_id
+        schema:
+          type: string
+        description: filter by branch_id
+      - in: query
+        name: company_id
+        schema:
+          type: string
+        description: filter by company_id
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Transaction
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTransactionList'
+          description: ''
+  /api/v1/transaction/{id}/:
+    get:
+      operationId: v1_transaction_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Transaction
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+          description: ''
+  /api/v1/transaction/{id}/delete/:
+    delete:
+      operationId: v1_transaction_delete_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Transaction
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/transaction/create/:
+    post:
+      operationId: v1_transaction_create_create
+      tags:
+      - Transaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTransaction'
+          description: ''
+  /api/v1/user/login/:
+    post:
+      operationId: v1_user_login_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPairRequest'
+            examples:
+              ExampleRequest:
+                value:
+                  username: admin
+                  password: admin123
+                summary: Example Request
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPairRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPairRequest'
+        required: true
+      security:
+      - apiKeyAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/user/login/refresh/:
+    post:
+      operationId: v1_user_login_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+        required: true
+      security:
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/v1/user/logout/:
+    post:
+      operationId: v1_user_logout_create
+      tags:
+      - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/v1/user/me/:
+    get:
+      operationId: v1_user_me_retrieve
+      description: Manage the authenticated user.
+      tags:
+      - Users
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
+  /api/v1/user/register/:
+    post:
+      operationId: v1_user_register_create
+      description: Create a new user in the system.
+      tags:
+      - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - apiKeyAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        name:
+          type: string
+          maxLength: 50
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+      required:
+      - company
+      - created_at
+      - id
+      - name
+      - updated_at
+    AccountRequest:
+      type: object
+      properties:
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+      required:
+      - company
+      - name
+    Branch:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        name:
+          type: string
+          maxLength: 255
+        address:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 255
+      required:
+      - company
+      - id
+    BranchRequest:
+      type: object
+      properties:
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        name:
+          type: string
+          maxLength: 255
+        address:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 255
+      required:
+      - company
+    ChangeStatusSelrializer:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+      - status
+    ChangeStatusSelrializerRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          minLength: 1
+      required:
+      - status
+    Child:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        first_name:
+          type: string
+          maxLength: 50
+        last_name:
+          type: string
+          maxLength: 50
+        middle_name:
+          type: string
+          nullable: true
+          maxLength: 50
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        description:
+          type: string
+          nullable: true
+          maxLength: 255
+      required:
+      - company
+      - id
+    ChildContract:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        child:
+          $ref: '#/components/schemas/Child'
+        payment_type:
+          $ref: '#/components/schemas/PaymentType'
+        group_registration:
+          $ref: '#/components/schemas/GroupRegistrationList'
+        is_deleted:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        date:
+          type: string
+          format: date-time
+          readOnly: true
+        subscription:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+        payment_date:
+          type: string
+          format: date
+          nullable: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        description:
+          type: string
+          nullable: true
+          maxLength: 255
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+        company:
+          type: integer
+        branch:
+          type: integer
+          nullable: true
+      required:
+      - child
+      - company
+      - created_at
+      - date
+      - group_registration
+      - id
+      - payment_type
+      - updated_at
+    ChildRequest:
+      type: object
+      properties:
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        first_name:
+          type: string
+          maxLength: 50
+        last_name:
+          type: string
+          maxLength: 50
+        middle_name:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 50
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        description:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 255
+      required:
+      - company
+    Company:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        is_default:
+          type: boolean
+        name:
+          type: string
+        is_deleted:
+          type: boolean
+        inn:
+          type: string
+          maxLength: 50
+        mfo:
+          type: string
+          maxLength: 50
+        jurisdical_address:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 255
+      required:
+      - id
+      - is_default
+      - name
+    CompanyRequest:
+      type: object
+      properties:
+        is_default:
+          type: boolean
+        name:
+          type: string
+          minLength: 1
+        is_deleted:
+          type: boolean
+        inn:
+          type: string
+          maxLength: 50
+        mfo:
+          type: string
+          maxLength: 50
+        jurisdical_address:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 255
+      required:
+      - is_default
+      - name
+    CreateChildContract:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        child:
+          type: integer
+        payment_type:
+          type: integer
+        group_registration:
+          type: integer
+        branch:
+          type: integer
+        is_deleted:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        date:
+          type: string
+          format: date-time
+          readOnly: true
+        subscription:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+        payment_date:
+          type: string
+          format: date
+          nullable: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        description:
+          type: string
+          nullable: true
+          maxLength: 255
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+        company:
+          type: integer
+      required:
+      - branch
+      - child
+      - company
+      - created_at
+      - date
+      - group_registration
+      - id
+      - payment_type
+      - updated_at
+    CreateChildContractRequest:
+      type: object
+      properties:
+        child:
+          type: integer
+        payment_type:
+          type: integer
+        group_registration:
+          type: integer
+        branch:
+          type: integer
+        is_deleted:
+          type: boolean
+        subscription:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+        payment_date:
+          type: string
+          format: date
+          nullable: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        description:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 255
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+        company:
+          type: integer
+      required:
+      - branch
+      - child
+      - company
+      - group_registration
+      - payment_type
+    CreateEmployeeContract:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        date:
+          type: string
+          format: date-time
+        employee:
+          type: integer
+        position:
+          type: integer
+        department:
+          type: integer
+        branch:
+          type: integer
+        salary:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,13}(?:\.\d{0,2})?$
+        is_deleted:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+        company:
+          type: integer
+      required:
+      - branch
+      - company
+      - created_at
+      - date
+      - department
+      - employee
+      - id
+      - position
+      - salary
+      - updated_at
+    CreateEmployeeContractRequest:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        employee:
+          type: integer
+        position:
+          type: integer
+        department:
+          type: integer
+        branch:
+          type: integer
+        salary:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,13}(?:\.\d{0,2})?$
+        is_deleted:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+        company:
+          type: integer
+      required:
+      - branch
+      - company
+      - date
+      - department
+      - employee
+      - position
+      - salary
+    CreateGroupRegistration:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        date:
+          type: string
+          format: date-time
+        group:
+          type: integer
+        branch:
+          type: integer
+        is_deleted:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+        company:
+          type: integer
+      required:
+      - branch
+      - company
+      - created_at
+      - date
+      - group
+      - id
+      - updated_at
+    CreateGroupRegistrationDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        date:
+          type: string
+          format: date-time
+        group:
+          type: integer
+        branch:
+          type: integer
+        children:
+          type: array
+          items:
+            type: integer
+        is_deleted:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+        company:
+          type: integer
+      required:
+      - branch
+      - children
+      - company
+      - created_at
+      - date
+      - group
+      - id
+      - updated_at
+    CreateGroupRegistrationDTORequest:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        group:
+          type: integer
+        branch:
+          type: integer
+        children:
+          type: array
+          items:
+            type: integer
+        is_deleted:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+        company:
+          type: integer
+      required:
+      - branch
+      - children
+      - company
+      - date
+      - group
+    CreateGroupRegistrationRequest:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        group:
+          type: integer
+        branch:
+          type: integer
+        is_deleted:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+        company:
+          type: integer
+      required:
+      - branch
+      - company
+      - date
+      - group
+    CreateSalary:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        date:
+          type: string
+          format: date-time
+        employee:
+          type: integer
+        company:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        description:
+          type: string
+          nullable: true
+          maxLength: 255
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+      required:
+      - company
+      - created_at
+      - date
+      - employee
+      - id
+      - updated_at
+    CreateSalaryRequest:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        employee:
+          type: integer
+        company:
+          type: integer
+        description:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 255
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+      required:
+      - company
+      - date
+      - employee
+    CreateSickLeave:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        date:
+          type: string
+          format: date-time
+        child:
+          type: integer
+        company:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        has_reason:
+          type: boolean
+        description:
+          type: string
+          nullable: true
+          maxLength: 255
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+      required:
+      - child
+      - company
+      - created_at
+      - date
+      - id
+      - updated_at
+    CreateSickLeaveRequest:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        child:
+          type: integer
+        company:
+          type: integer
+        has_reason:
+          type: boolean
+        description:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 255
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+      required:
+      - child
+      - company
+      - date
+    CreateTransaction:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        date:
+          type: string
+          format: date-time
+        child:
+          type: integer
+        company:
+          type: integer
+        payment_type:
+          type: integer
+        account:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        description:
+          type: string
+          nullable: true
+          maxLength: 255
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+      required:
+      - account
+      - child
+      - company
+      - created_at
+      - date
+      - id
+      - payment_type
+      - updated_at
+    CreateTransactionRequest:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        child:
+          type: integer
+        company:
+          type: integer
+        payment_type:
+          type: integer
+        account:
+          type: integer
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        description:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 255
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+      required:
+      - account
+      - child
+      - company
+      - date
+      - payment_type
+    CustomTokenObtainPairRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
+      - username
+    Department:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        title:
+          type: string
+          maxLength: 100
+      required:
+      - company
+      - id
+    DepartmentRequest:
+      type: object
+      properties:
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        title:
+          type: string
+          maxLength: 100
+      required:
+      - company
+    Employee:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        first_name:
+          type: string
+          maxLength: 50
+        last_name:
+          type: string
+          maxLength: 50
+        middle_name:
+          type: string
+          nullable: true
+          maxLength: 50
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        description:
+          type: string
+          nullable: true
+          maxLength: 255
+      required:
+      - company
+      - id
+    EmployeeContract:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        employee:
+          $ref: '#/components/schemas/Employee'
+        position:
+          $ref: '#/components/schemas/Position'
+        department:
+          $ref: '#/components/schemas/Department'
+        branch:
+          $ref: '#/components/schemas/Branch'
+        is_deleted:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        date:
+          type: string
+          format: date-time
+          readOnly: true
+        salary:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,13}(?:\.\d{0,2})?$
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+        company:
+          type: integer
+      required:
+      - branch
+      - company
+      - created_at
+      - date
+      - department
+      - employee
+      - id
+      - position
+      - updated_at
+    EmployeeContractRequest:
+      type: object
+      properties:
+        employee:
+          $ref: '#/components/schemas/EmployeeRequest'
+        position:
+          $ref: '#/components/schemas/PositionRequest'
+        department:
+          $ref: '#/components/schemas/DepartmentRequest'
+        branch:
+          $ref: '#/components/schemas/BranchRequest'
+        is_deleted:
+          type: boolean
+        salary:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,13}(?:\.\d{0,2})?$
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+        company:
+          type: integer
+      required:
+      - branch
+      - company
+      - department
+      - employee
+      - position
+    EmployeeRequest:
+      type: object
+      properties:
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        first_name:
+          type: string
+          maxLength: 50
+        last_name:
+          type: string
+          maxLength: 50
+        middle_name:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 50
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        description:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 255
+      required:
+      - company
+    Group:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 255
+      required:
+      - company
+      - id
+    GroupRegistrationList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        group:
+          $ref: '#/components/schemas/Group'
+        branch:
+          $ref: '#/components/schemas/Branch'
+        is_deleted:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        date:
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+        company:
+          type: integer
+      required:
+      - branch
+      - company
+      - created_at
+      - date
+      - group
+      - id
+      - updated_at
+    GroupRegistrationUpdateStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+      - status
+    GroupRegistrationUpdateStatusRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          minLength: 1
+      required:
+      - status
+    GroupRequest:
+      type: object
+      properties:
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 255
+      required:
+      - company
+    Me:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          maxLength: 255
+      required:
+      - id
+      - username
+    PaginatedAccountList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Account'
+    PaginatedBranchList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Branch'
+    PaginatedChildContractList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChildContract'
+    PaginatedChildList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Child'
+    PaginatedCompanyList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Company'
+    PaginatedDepartmentList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Department'
+    PaginatedEmployeeContractList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmployeeContract'
+    PaginatedEmployeeList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Employee'
+    PaginatedGroupList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+    PaginatedGroupRegistrationListList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupRegistrationList'
+    PaginatedPaymentTypeList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentType'
+    PaginatedPositionList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Position'
+    PaginatedReasonList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reason'
+    PaginatedSalaryListList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SalaryList'
+    PaginatedSickLeaveListList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SickLeaveList'
+    PaginatedTransactionList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+    PatchedBranchRequest:
+      type: object
+      properties:
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        name:
+          type: string
+          maxLength: 255
+        address:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 255
+    PatchedChildRequest:
+      type: object
+      properties:
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        first_name:
+          type: string
+          maxLength: 50
+        last_name:
+          type: string
+          maxLength: 50
+        middle_name:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 50
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        description:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 255
+    PatchedCompanyRequest:
+      type: object
+      properties:
+        is_default:
+          type: boolean
+        name:
+          type: string
+          minLength: 1
+        is_deleted:
+          type: boolean
+        inn:
+          type: string
+          maxLength: 50
+        mfo:
+          type: string
+          maxLength: 50
+        jurisdical_address:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 255
+    PatchedCreateGroupRegistrationRequest:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        group:
+          type: integer
+        branch:
+          type: integer
+        is_deleted:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+        company:
+          type: integer
+    PatchedEmployeeRequest:
+      type: object
+      properties:
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        first_name:
+          type: string
+          maxLength: 50
+        last_name:
+          type: string
+          maxLength: 50
+        middle_name:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 50
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        description:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 255
+    PatchedGroupRequest:
+      type: object
+      properties:
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 255
+    PaymentType:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        name:
+          type: string
+          maxLength: 100
+      required:
+      - company
+      - id
+    PaymentTypeRequest:
+      type: object
+      properties:
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        name:
+          type: string
+          maxLength: 100
+      required:
+      - company
+    Position:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        title:
+          type: string
+          maxLength: 100
+      required:
+      - company
+      - id
+    PositionRequest:
+      type: object
+      properties:
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        title:
+          type: string
+          maxLength: 100
+      required:
+      - company
+    Reason:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        title:
+          type: string
+          maxLength: 100
+      required:
+      - company
+      - id
+    ReasonRequest:
+      type: object
+      properties:
+        company:
+          type: integer
+        is_deleted:
+          type: boolean
+        title:
+          type: string
+          maxLength: 100
+      required:
+      - company
+    SalaryList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        employee:
+          $ref: '#/components/schemas/EmployeeContract'
+        company:
+          $ref: '#/components/schemas/Company'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        date:
+          type: string
+          format: date-time
+          readOnly: true
+        description:
+          type: string
+          nullable: true
+          maxLength: 255
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+      required:
+      - company
+      - created_at
+      - date
+      - employee
+      - id
+      - updated_at
+    SickLeaveList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        child:
+          $ref: '#/components/schemas/ChildContract'
+        company:
+          $ref: '#/components/schemas/Company'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        date:
+          type: string
+          format: date-time
+          readOnly: true
+        has_reason:
+          type: boolean
+        description:
+          type: string
+          nullable: true
+          maxLength: 255
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+      required:
+      - child
+      - company
+      - created_at
+      - date
+      - id
+      - updated_at
+    StatusEnum:
+      enum:
+      - created
+      - active
+      type: string
+      description: |-
+        * `created` - Created
+        * `active` - Active
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+      required:
+      - access
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - refresh
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        child:
+          $ref: '#/components/schemas/ChildContract'
+        company:
+          $ref: '#/components/schemas/Company'
+        payment_type:
+          $ref: '#/components/schemas/PaymentType'
+        account:
+          $ref: '#/components/schemas/Account'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        date:
+          type: string
+          format: date-time
+          readOnly: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        description:
+          type: string
+          nullable: true
+          maxLength: 255
+        created_by:
+          type: integer
+          nullable: true
+        updated_by:
+          type: integer
+          nullable: true
+      required:
+      - account
+      - child
+      - company
+      - created_at
+      - date
+      - id
+      - payment_type
+      - updated_at
+    User:
+      type: object
+      description: Serializer for user object
+      properties:
+        username:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          maxLength: 255
+      required:
+      - name
+      - username
+    UserRequest:
+      type: object
+      description: Serializer for user object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          maxLength: 255
+        password:
+          type: string
+          writeOnly: true
+          minLength: 5
+          maxLength: 128
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+      required:
+      - name
+      - password
+      - username
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

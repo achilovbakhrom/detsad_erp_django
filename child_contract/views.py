@@ -1,124 +1,59 @@
-from rest_framework.generics import CreateAPIView, UpdateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
+from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, RetrieveDestroyAPIView
+from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
-from django.db.models import Q
 from child_contract.serializers import ChangeStatusSelrializer, CreateChildContractSerializer, ChildContractSerializer
-from core.models import Branch, ChildContract, BaseUserCheck, GroupRegistration
+from core.mixins import NonDeletedFilterMixin, TenantFilterMixin
+from core.models import ChildContract
 from core.pagination import CustomPagination
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
+from core.permissions import HasTenantIdPermission
+from child_contract.filters import ChildContractFilter 
 
-@extend_schema(
-    tags=['Child Contract'],
-    parameters=[
-        OpenApiParameter(
-            name="company_id",
-            required=True,
-            type=OpenApiTypes.STR,
-            location=OpenApiParameter.QUERY,
-            description="filter by company_id"
-        ),
-        OpenApiParameter(
-            name="branch_id",
-            required=False,
-            type=OpenApiTypes.STR,
-            location=OpenApiParameter.QUERY,
-            description="filter by branch_id"
-        ),
-    ]
-)
-class ChildContractView(ListAPIView, BaseUserCheck):
-    permission_classes=[IsAuthenticated]
-    queryset = GroupRegistration.objects.all()
+@extend_schema(tags=['Child Contract'])
+class ChildContractListView(NonDeletedFilterMixin, TenantFilterMixin, ListAPIView):
     serializer_class = ChildContractSerializer
     pagination_class = CustomPagination
+    permission_classes=[IsAuthenticated, HasTenantIdPermission]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    queryset = ChildContract.objects.all()
+    search_fields = ['child__first_name', 'child__last_name', 'child__middle_name', 'child__description']
+    filterset_class = ChildContractFilter
 
     def get_queryset(self):
-        request = self.request
-        user_id = request.user.id
-        company_id = request.query_params.get('company_id', None)
-        (belongs, err_msg) = self.company_belongs_to_user(user_id=user_id, company_id=company_id)
-        if not belongs:
-            raise ValidationError({ "detail": err_msg })
-        
-        branch_id = request.query_params.get('branch_id', None)
-
-        if branch_id:
-            branches = [branch_id]
-        else:
-            branches = Branch.objects.filter(company_id=company_id).values_list("id", flat=True)
-        
-        queryset = ChildContract.objects.filter(Q(branch_id__in=branches) & Q(is_deleted=False))
-
+        queryset = super().get_queryset()
+        date_from = self.request.query_params.get('date_from')
+        date_to = self.request.query_params.get('date_to')
+        if date_from and date_to:
+            queryset = queryset.filter(date__range=[date_from, date_to])
+        elif date_from:
+            queryset = queryset.filter(date__gte=date_from)
+        elif date_to:
+            queryset = queryset.filter(date__lte=date_to)
         return queryset
 
-@extend_schema(
-    tags=['Child Contract'],
-    parameters=[
-        OpenApiParameter(
-            name="branch_id",
-            required=False,
-            type=OpenApiTypes.STR,
-            location=OpenApiParameter.QUERY,
-            description="filter by branch_id"
-        ),
-        OpenApiParameter(
-            name="group_registration_id",
-            required=False,
-            type=OpenApiTypes.STR,
-            location=OpenApiParameter.QUERY,
-            description="filter by group_registration_id"
-        ),
-    ]
-)
-class ChildContractByParentView(ListAPIView, BaseUserCheck):
-    queryset = ChildContract.objects.none()
-    pagination_class = CustomPagination
-    permission_classes = [IsAuthenticated]
-    serializer_class = ChildContractSerializer
-
-    def get_queryset(self):
-        user = self.request.user
-        group_registration_id = self.request.query_params.get('group_registration_id')
-        branch_id = self.request.query_params.get('branch_id')
-        if branch_id is None and group_registration_id is None:
-            raise ValidationError({ "detail": "Provide group_registration_id or branch_id to get list" })
-        if group_registration_id:
-            group_registration = GroupRegistration.objects.get(id=group_registration_id)
-            (belongs, err_msg) = self.company_belongs_to_user(user.id, group_registration.branch.company.id)
-            if not belongs:
-                raise ValidationError({ "detail": err_msg })
-            return ChildContract.objects.filter(Q(group_registration_id=group_registration_id) & Q(is_deleted=False))
-        else:
-            branch = Branch.objects.get(id=branch_id)
-            (belongs, err_msg) = self.company_belongs_to_user(user.id, branch.company.id)
-            if not belongs:
-                raise ValidationError({ "detail": err_msg })
-            return ChildContract.objects.filter(Q(branch_id=branch_id) & Q(is_deleted=False))
-
 @extend_schema(tags=['Child Contract'])
-class RetrieveChildContractView(RetrieveAPIView):
+class ChildContractRetrieveDestroyView(RetrieveDestroyAPIView, NonDeletedFilterMixin, TenantFilterMixin):
     queryset = ChildContract.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasTenantIdPermission]
     serializer_class = ChildContractSerializer
     lookup_field = 'id'
-    
 
 @extend_schema(tags=['Child Contract'])
-class CreateChildContractView(CreateAPIView):
+class CreateChildContractView(CreateAPIView, NonDeletedFilterMixin):
+    permission_classes = [IsAuthenticated, HasTenantIdPermission]
     queryset = ChildContract.objects.all()
-    permission_classes = [IsAuthenticated]
     serializer_class = CreateChildContractSerializer
 
 @extend_schema(tags=['Child Contract'])
-class ChildContractUpdateStatusView(UpdateAPIView, BaseUserCheck):
+class ChildContractUpdateStatusView(UpdateAPIView, NonDeletedFilterMixin, TenantFilterMixin):
     http_method_names = ['put']
     serializer_class = ChangeStatusSelrializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasTenantIdPermission]
 
     def put(self, request, *args, **kwargs):
-        
         id = self.kwargs.get('id')
         body = request.data
         change_serializer = self.get_serializer(data=body)
@@ -128,26 +63,17 @@ class ChildContractUpdateStatusView(UpdateAPIView, BaseUserCheck):
         status = body.get('status')
         user = self.request.user
         contract = ChildContract.objects.get(id=id)
+        
         (belongs, err_msg) = self.company_belongs_to_user(user.id, contract.branch.company.id)
         if not belongs:
             raise ValidationError({ "detail": err_msg })
+        
+        # Implement the status change logic
+        if status not in ['created', 'active', 'inactive', 'terminated']:
+            raise ValidationError({ "detail": "Invalid status" })
         
         contract.status = status
         contract.save()
         serializer = ChildContractSerializer(instance=contract)
         
         return Response(serializer.data)
-
-
-@extend_schema(tags=['Child Contract'])
-class ChildContractDeleteView(DestroyAPIView):
-    queryset = ChildContract.objects.all()
-    permission_classes = [IsAuthenticated]
-    lookup_field = 'id'
-
-    def destroy(self, request, *args, **kwargs):
-        id = kwargs.get('id')
-        contract = ChildContract.objects.get(id=id)
-        contract.status = 'created'
-        contract.save()
-        return super().destroy(request, *args, **kwargs)

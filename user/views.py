@@ -59,7 +59,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 @extend_schema(tags=['Users'])
 class LogoutView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
 
     def post(self, request):
         try:

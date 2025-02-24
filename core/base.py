@@ -17,7 +17,6 @@ class AppManager(Manager):
     def get_queryset(self):
         return AppQuerySet(self.model, using=self._db).exclude(is_deleted=True)
 
-
 class UserManager(BaseUserManager):
     """Manager for users."""
 

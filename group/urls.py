@@ -1,13 +1,12 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 from . import views
 
 app_name = 'group'
 
-router = DefaultRouter()
-
-router.register('', views.GroupView)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', views.GroupListView.as_view()),
+    path('<int:id>/', views.GroupRetrieveDestroyView.as_view()),
+    path('<int:id>/edit/', views.GroupEditView.as_view()),
+    path('create/', views.GroupCreateView.as_view()),
 ]
