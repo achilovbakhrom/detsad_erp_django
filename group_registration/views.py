@@ -3,72 +3,70 @@ from rest_framework.generics import ListAPIView, CreateAPIView, UpdateAPIView, D
 from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 
+from core.mixins import NonDeletedFilterMixin, TenantFilterMixin
 from core.pagination import CustomPagination
+from core.permissions import HasTenantIdPermission
+from group_registration.filters import GroupRegistrationFilter
 from .serializers import (
-    CreateGroupRegistrationDTO,
     CreateGroupRegistrationSerializer,
     GroupRegistrationListSerializer,
     GroupRegistrationUpdateStatusSerializer,
+    ChildContractSerializer
 )
-from core.models import BaseUserCheck, Branch, ChildContract, GroupRegistration
+from core.models import ChildContract, GroupRegistration
 from pydash import omit
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
-from drf_spectacular.utils import OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
-from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
-@extend_schema(
-    tags=['Group Registration'],
-    parameters=[
-        OpenApiParameter(
-            name="company_id",
-            required=True,
-            type=OpenApiTypes.STR,
-            location=OpenApiParameter.QUERY,
-            description="filter by company_id"
-        ),
-        OpenApiParameter(
-            name="branch_id",
-            required=False,
-            type=OpenApiTypes.STR,
-            location=OpenApiParameter.QUERY,
-            description="filter by branch_id"
-        ),
-    ]
-)
-class GroupRegistrationView(ListAPIView, BaseUserCheck):
-    permission_classes=[IsAuthenticated]
+@extend_schema(tags=['Group Registration'])
+class GroupRegistrationListView(NonDeletedFilterMixin, TenantFilterMixin, ListAPIView):
     queryset = GroupRegistration.objects.all()
+    permission_classes = [IsAuthenticated, HasTenantIdPermission]
     serializer_class = GroupRegistrationListSerializer
     pagination_class = CustomPagination
+    search_fields = ['group__name', 'group__description']
+    filterset_class = GroupRegistrationFilter
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
 
     def get_queryset(self):
-        request = self.request
-        user_id = request.user.id
-        company_id = request.query_params.get('company_id', None)
-        (belongs, err_msg) = self.company_belongs_to_user(user_id=user_id, company_id=company_id)
-        if not belongs:
-            raise ValidationError({ "detail": err_msg })
-        
-        branch_id = request.query_params.get('branch_id', None)
-
-        if branch_id:
-            branches = [branch_id]
-        else:
-            branches = Branch.objects.filter(company_id=company_id).values_list("id", flat=True)
-        
-        queryset = GroupRegistration.objects.filter(Q(branch_id__in=branches) & Q(is_deleted=False))
-
+        queryset = super().get_queryset()
+        date_from = self.request.query_params.get('date_from')
+        date_to = self.request.query_params.get('date_to')
+        if date_from and date_to:
+            queryset = queryset.filter(date__range=[date_from, date_to])
+        elif date_from:
+            queryset = queryset.filter(date__gte=date_from)
+        elif date_to:
+            queryset = queryset.filter(date__lte=date_to)
         return queryset
+
+@extend_schema(tags=['Group Registration'])
+class GroupRegistrationDestroyView(DestroyAPIView, NonDeletedFilterMixin, TenantFilterMixin):
+    queryset = GroupRegistration.objects.all()
+    permission_classes = [IsAuthenticated, HasTenantIdPermission]
+    serializer_class = GroupRegistrationListSerializer
+
+    def perform_destroy(self, instance):
+        related_contracts = ChildContract.objects.filter(group_registration_id=instance.id)
+        related_contracts.update(group_registration_id=None, status='created')
+        
+        instance.delete()
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        serializer = GroupRegistrationListSerializer(instance)
+        return Response(serializer.data)
 
 
 @extend_schema(tags=['Group Registration'])
 class CreateGroupRegistrationView(CreateAPIView):
     queryset = GroupRegistration.objects.all()
     permission_classes = [IsAuthenticated]
-    serializer_class = CreateGroupRegistrationDTO
+    serializer_class = CreateGroupRegistrationSerializer
 
     def post(self, request, *args, **kwargs):
         body = request.data
@@ -84,10 +82,11 @@ class CreateGroupRegistrationView(CreateAPIView):
 
 
 @extend_schema(tags=['Group Registration'])
-class GroupRegistrationUpdateStatusView(UpdateAPIView):
+class GroupRegistrationUpdateStatusView(NonDeletedFilterMixin, TenantFilterMixin, UpdateAPIView):
     queryset = GroupRegistration.objects.all()
     http_method_names = ['put']
     serializer_class = GroupRegistrationUpdateStatusSerializer
+    permission_classes = [IsAuthenticated, HasTenantIdPermission]
 
     def put(self, request, *args, **kwargs):
         id = self.kwargs.get('id', None)
@@ -109,46 +108,46 @@ class GroupRegistrationUpdateStatusView(UpdateAPIView):
         else:
             raise ValidationError({ "detail": serializer.errors })
 
-
-
-@extend_schema(tags=['Group Registration'])
-class GroupRegistrationDeleteView(DestroyAPIView):
-    queryset = GroupRegistration.objects.all()
-    serializer_class = GroupRegistrationListSerializer
-    lookup_field = 'id'
-
-    def destroy(self, request, *args, **kwargs):
-        id = kwargs.get('id')
-        registration = GroupRegistration.objects.get(id=id)
-        registration.status = 'created'
-        registration.save()
-        ChildContract.objects.filter(id=id).update(status='pending')
-        return super().destroy(request, *args, **kwargs)
     
 @extend_schema(tags=['Group Registration'])
-class GroupRegistrationRetrieveView(RetrieveAPIView):
-    permission_classes=[IsAuthenticated]
+class GroupRegistrationRetrieveView(RetrieveAPIView, TenantFilterMixin, NonDeletedFilterMixin):
+    permission_classes = [IsAuthenticated, HasTenantIdPermission]
     queryset = GroupRegistration.objects.all()
     serializer_class = GroupRegistrationListSerializer
     lookup_field = 'id'
 
-@extend_schema(tags=['Group Registration'])
-class UpdateGroupRegistrationView(UpdateAPIView):
-    queryset = GroupRegistration.objects.all()
-    permission_classes = [IsAuthenticated]
-    serializer_class = CreateGroupRegistrationSerializer
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+        
+        # Add all child contracts to the returned data
+        child_contracts = ChildContract.objects.filter(group_registration_id=instance.id)
+        data['child_contracts'] = ChildContractSerializer(child_contracts, many=True).data
+        
+        return Response(data)
 
+@extend_schema(tags=['Group Registration'])
+class UpdateGroupRegistrationView(UpdateAPIView, TenantFilterMixin, NonDeletedFilterMixin):
+    queryset = GroupRegistration.objects.all()
+    permission_classes = [IsAuthenticated, HasTenantIdPermission]
+    serializer_class = CreateGroupRegistrationSerializer
+    lookup_field = 'id'
+    http_method_names = ['put']
+
+@extend_schema(tags=['Group Registration'])
+class GroupRegistrationBindChildContractsView(UpdateAPIView, TenantFilterMixin, NonDeletedFilterMixin):
+    queryset = GroupRegistration.objects.all()
+    permission_classes = [IsAuthenticated, HasTenantIdPermission]
+    serializer_class = ChildContractSerializer
+    http_method_names = ['put']
+    
     def put(self, request, *args, **kwargs):
         id = self.kwargs.get('id', None)
-        registration = get_object_or_404(GroupRegistration, id=id)
-        
-        serializer = self.get_serializer(instance=registration, data=request.data, partial=True)
-
-        if serializer.is_valid():
-            
-            serializer.save()  # Saves all validated fields, including `date`
-            group_serializer = GroupRegistrationListSerializer(instance=serializer.instance)
-            return Response(group_serializer.data)
-        
-        raise ValidationError({"detail": serializer.errors})
-    
+        child_contract_id = self.kwargs.get('child_contract_id')
+        registration = GroupRegistration.objects.get(id=id)
+        child_contract = ChildContract.objects.get(id=child_contract_id)
+        child_contract.group_registration_id = registration.id
+        child_contract.save()
+        serializer = ChildContractSerializer(child_contract)
+        return Response(serializer.data)

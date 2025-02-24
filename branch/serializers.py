@@ -1,7 +1,7 @@
-from core.models import BaseUserCheck, Branch, Company
+from core.models import Branch
 from rest_framework import serializers
 from company.serializers import CompanySerializer
-from core.permissions import get_tenant_id
+from core.serializers import BaseModelInputSerializer
 
 class BranchSerializer(serializers.ModelSerializer):
     company = CompanySerializer()
@@ -9,24 +9,7 @@ class BranchSerializer(serializers.ModelSerializer):
         model = Branch
         fields = '__all__'
     
-class BranchInputSerializer(serializers.ModelSerializer, BaseUserCheck):
-    company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all())
-    
+class BranchInputSerializer(BaseModelInputSerializer):
     class Meta:
         model = Branch
         fields = '__all__'
-    
-    def create(self, validated_data):
-        request = self.context.get('request')
-        tenant_id = get_tenant_id(request)
-        validated_data['company'] = Company.objects.get(id=tenant_id)
-        return super().create(validated_data)
-    
-    def update(self, instance, validated_data):
-        request = self.context.get('request')
-        user_id = request.user.id
-        tenant_id = get_tenant_id(request)
-        company_id = validated_data.get('company').id
-        if self.company_belongs_to_user(user_id, company_id):
-            validated_data['company'] = Company.objects.get(id=tenant_id)
-        return super().update(instance, validated_data)

@@ -2,67 +2,68 @@ from rest_framework import generics
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 from rest_framework.exceptions import ValidationError
+from core.mixins import NonDeletedFilterMixin, TenantFilterMixin
 from core.models import BaseUserCheck, Branch, EmployeeContract
 from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from core.pagination import CustomPagination
+from core.permissions import HasTenantIdPermission
+from employee_contract.filters import EmployeeContractFilter
 from employee_contract.serializers import EmployeeContractSerializer, CreateEmployeeContractSerializer
-
-@extend_schema(
-    tags=['Employee Contract'],
-    parameters=[
-        OpenApiParameter(
-            name="company_id",
-            required=True,
-            type=OpenApiTypes.STR,
-            location=OpenApiParameter.QUERY,
-            description="filter by company_id"
-        ),
-        OpenApiParameter(
-            name="branch_id",
-            required=False,
-            type=OpenApiTypes.STR,
-            location=OpenApiParameter.QUERY,
-            description="filter by branch_id"
-        ),
-    ]
-)
-class EmployeeContractsListView(generics.ListAPIView, BaseUserCheck):
-    queryset=EmployeeContract.objects.none()
-    permission_classes=[IsAuthenticated]
-    serializer_class = EmployeeContractSerializer
-    pagination_class = CustomPagination
-
-    def get_queryset(self):
-        request = self.request
-        user_id = request.user.id
-        company_id = request.query_params.get('company_id', None)
-        (belongs, err_msg) = self.company_belongs_to_user(user_id=user_id, company_id=company_id)
-        if not belongs:
-            raise ValidationError({ "detail": err_msg })
-        
-        branch_id = request.query_params.get('branch_id', None)
-
-        if branch_id:
-            branches = [branch_id]
-        else:
-            branches = Branch.objects.filter(company_id=company_id).values_list("id", flat=True)
-        
-        queryset = EmployeeContract.objects.filter(Q(branch_id__in=branches) & Q(is_deleted=False))
-
-        return queryset
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
 @extend_schema(tags=['Employee Contract'])
-class HireEmployeeView(generics.CreateAPIView):
+class EmployeeContractListView(NonDeletedFilterMixin, TenantFilterMixin, generics.ListAPIView):
     queryset = EmployeeContract.objects.all()
-    permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated, HasTenantIdPermission]
+    serializer_class = EmployeeContractSerializer
+    pagination_class = CustomPagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ['employee__first_name', 'employee__last_name', 'employee__middle_name', 'employee__description']
+    filterset_class = EmployeeContractFilter
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        date_from = self.request.query_params.get('date_from')
+        date_to = self.request.query_params.get('date_to')
+        # salary_from = self.request.query_params.get('salary_from')
+        # salary_to = self.request.query_params.get('salary_to')
+        if date_from and date_to:
+            queryset = queryset.filter(date__range=[date_from, date_to])
+        elif date_from:
+            queryset = queryset.filter(date__gte=date_from)
+        elif date_to:
+            queryset = queryset.filter(date__lte=date_to)
+        
+        # if salary_from and salary_to:
+        #     queryset = queryset.filter(salary__range=[salary_from, salary_to])
+        # elif salary_from:
+        #     queryset = queryset.filter(salary__gte=salary_from)
+        # elif salary_to:
+        #     queryset = queryset.filter(salary__lte=salary_to)
+        return queryset
+
+
+@extend_schema(tags=['Employee Contract'])
+class EmployeeContractRetrieveDestroyView(NonDeletedFilterMixin, TenantFilterMixin, generics.RetrieveDestroyAPIView):
+    queryset = EmployeeContract.objects.all()
+    permission_classes=[IsAuthenticated, HasTenantIdPermission]
+    serializer_class = EmployeeContractSerializer
+    lookup_field = "id"
+
+
+@extend_schema(tags=['Employee Contract'])
+class HireEmployeeView(generics.CreateAPIView, NonDeletedFilterMixin):
+    queryset = EmployeeContract.objects.all()
+    permission_classes=[IsAuthenticated, HasTenantIdPermission]
     serializer_class=CreateEmployeeContractSerializer
 
 @extend_schema(tags=['Employee Contract'])
-class ActivateEmployeeContractView(generics.UpdateAPIView):
-    queryset = EmployeeContract.objects.all()
+class ActivateEmployeeContractView(generics.UpdateAPIView, NonDeletedFilterMixin, TenantFilterMixin):
     http_method_names = ['put']
+    queryset = EmployeeContract.objects.all()
     serializer_class = EmployeeContractSerializer
 
     def update(self, request, *args, **kwargs):
@@ -80,12 +81,6 @@ class ActivateEmployeeContractView(generics.UpdateAPIView):
 
         return Response(seralizer.data)
 
-@extend_schema(tags=['Employee Contract'])
-class RetrieveEmployeeView(generics.RetrieveAPIView):
-    queryset = EmployeeContract.objects.all()
-    permission_classes=[IsAuthenticated]
-    serializer_class = EmployeeContractSerializer
-    lookup_field = "id"
     
 
 @extend_schema(tags=['Employee Contract'])
@@ -107,11 +102,4 @@ class FireEmployeeView(generics.DestroyAPIView):
         
         return Response(seralizer.data)
     
-
-@extend_schema(tags=['Employee Contract'])
-class DeleteEmployeeView(generics.DestroyAPIView):
-    queryset = EmployeeContract.objects.all()
-    permission_classes=[IsAuthenticated]
-    serializer_class = EmployeeContractSerializer
-    lookup_field = 'id'
     

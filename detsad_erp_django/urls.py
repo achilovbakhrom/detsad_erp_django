@@ -46,4 +46,5 @@ urlpatterns = [
     path('api/v1/sick-leave/', include('sick_leave.urls'), name="sick_leave"),
     path('api/v1/salary/', include('salary.urls'), name="salary"),
     path('api/v1/transaction/', include('transaction.urls'), name="transaction"),
+    path('api/v1/subscription/', include('subscription.urls'), name="subscription"),
 ]

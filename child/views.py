@@ -37,4 +37,3 @@ class ChildCreateView(NonDeletedFilterMixin, generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated, HasTenantIdPermission]
     queryset= Child.objects.all()
     serializer_class = ChildInputSerializer
-    lookup_field = "id"

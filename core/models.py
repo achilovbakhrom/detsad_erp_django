@@ -85,7 +85,7 @@ class ChildContract(SoftDelete, AuditableModel, PerCompanyModel):
     date = models.DateTimeField(auto_now_add=True)
     branch = models.ForeignKey(Branch, null=True, on_delete=models.CASCADE, db_column='child_contract_branch')
     child = models.ForeignKey(Child, null=False, on_delete=models.CASCADE)
-    subscription = models.DecimalField(null=True, decimal_places=2, max_digits=10)
+    subscription_amount = models.DecimalField(null=True, decimal_places=2, max_digits=10)
     payment_type = models.ForeignKey(PaymentType, null=False, on_delete=models.CASCADE)
     payment_date = models.DateField(null=True, default=None)
     status = models.CharField(
@@ -129,6 +129,14 @@ class Transaction(AuditableModel, PerCompanyModel):
     account = models.ForeignKey(Account, null=False, on_delete=models.CASCADE)
     description = models.CharField(max_length=255, null=True, default=None)
     child = models.ForeignKey(ChildContract, null=True, on_delete=models.CASCADE)
+
+class Subscription(AuditableModel, PerCompanyModel):
+    date = models.DateTimeField(auto_now_add=True)
+    child = models.ForeignKey(ChildContract, null=False, on_delete=models.CASCADE)
+    amount = models.DecimalField(default=0.0, decimal_places=2, max_digits=10)
+    payment_type = models.ForeignKey(PaymentType, null=False, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, null=False, on_delete=models.CASCADE)
+    description = models.CharField(max_length=255, null=True, default=None)
 
 class BaseUserCheck:
     class Meta:

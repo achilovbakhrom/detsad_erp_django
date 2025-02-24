@@ -7,7 +7,7 @@ from .serializers import BranchInputSerializer, BranchSerializer
 from core.models import Branch
 from drf_spectacular.utils import extend_schema
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
+
 
 @extend_schema(tags=['Branch'])
 class BranchListView(NonDeletedFilterMixin, TenantFilterMixin, generics.ListAPIView):
