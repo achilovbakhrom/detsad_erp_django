@@ -7,4 +7,4 @@ class CompanySerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True)
     class Meta:
         model = Company
-        fields = '__all__'
+        exclude = ('is_deleted', )

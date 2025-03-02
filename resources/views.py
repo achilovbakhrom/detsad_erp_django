@@ -14,7 +14,6 @@ from rest_framework import status
 class BaseResourceView(NonDeletedFilterMixin, TenantFilterMixin, viewsets.ModelViewSet):
     pagination_class = CustomPagination
     permission_classes = [permissions.IsAuthenticated, HasTenantIdPermission]
-    http_method_names = ['get', 'post', 'delete', 'put']    
     class Meta:
         abstract = True
 
@@ -26,7 +25,7 @@ class PositionView(BaseResourceView):
     queryset = Position.objects.all()
 
     def get_serializer_class(self):
-        if self.request.method == 'POST' or self.request.method == 'PUT':
+        if self.request.method == 'POST' or self.request.method == 'PUT' or self.request.method == 'PATCH':
             return PositionInputSerializer
         return PositionSerializer
 
@@ -34,7 +33,7 @@ class ReasonView(BaseResourceView):
     queryset = Reason.objects.all()
 
     def get_serializer_class(self):
-        if self.request.method == 'POST' or self.request.method == 'PUT':
+        if self.request.method == 'POST' or self.request.method == 'PUT' or self.request.method == 'PATCH':
             return ReasonInputSerializer
         return ReasonSerializer
 
@@ -42,7 +41,7 @@ class DepartmentView(BaseResourceView):
     queryset = Department.objects.all()
 
     def get_serializer_class(self):
-        if self.request.method == 'POST' or self.request.method == 'PUT':
+        if self.request.method == 'POST' or self.request.method == 'PUT' or self.request.method == 'PATCH':
             return DepartmentInputSerializer
         return DepartmentSerializer
 
@@ -50,7 +49,7 @@ class PaymentTypeView(BaseResourceView):
     queryset = PaymentType.objects.all()
     
     def get_serializer_class(self):
-        if self.request.method == 'POST' or self.request.method == 'PUT':
+        if self.request.method == 'POST' or self.request.method == 'PUT' or self.request.method == 'PATCH':
             return PaymentTypeInputSerializer
         return PaymentTypeSerializer
 
@@ -58,7 +57,7 @@ class AccountView(BaseResourceView):
     queryset = Account.objects.all()
 
     def get_serializer_class(self):
-        if self.request.method == 'POST' or self.request.method == 'PUT':
+        if self.request.method == 'POST' or self.request.method == 'PUT' or self.request.method == 'PATCH':
             return AccountInputSerializer
         return AccountSerializer
 

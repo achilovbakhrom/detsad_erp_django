@@ -16,7 +16,7 @@ class BranchTests(APITestCase):
 
     def test_create_branch(self):
         url = reverse('branch:branch-create')
-        data = {'name': 'New Branch', 'company': self.company.id, 'address': ''}
+        data = {'name': 'New Branch', 'address': ''}
         
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

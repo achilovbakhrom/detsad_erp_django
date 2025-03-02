@@ -8,10 +8,10 @@ from core.pagination import CustomPagination
 from core.permissions import HasTenantIdPermission
 from group_registration.filters import GroupRegistrationFilter
 from .serializers import (
-    CreateGroupRegistrationSerializer,
+    GroupRegistrationInputSerializer,
     GroupRegistrationListSerializer,
     GroupRegistrationUpdateStatusSerializer,
-    ChildContractSerializer
+    ChildContractGroupSerializer
 )
 from core.models import ChildContract, GroupRegistration
 from pydash import omit
@@ -65,21 +65,8 @@ class GroupRegistrationDestroyView(DestroyAPIView, NonDeletedFilterMixin, Tenant
 @extend_schema(tags=['Group Registration'])
 class CreateGroupRegistrationView(CreateAPIView):
     queryset = GroupRegistration.objects.all()
-    permission_classes = [IsAuthenticated]
-    serializer_class = CreateGroupRegistrationSerializer
-
-    def post(self, request, *args, **kwargs):
-        body = request.data
-        create_serializer = CreateGroupRegistrationSerializer(data=omit(body, 'children'))
-        if create_serializer.is_valid():
-            result = create_serializer.save()
-            children = body.get('children')
-            if len(children) > 0:
-                ChildContract.objects.filter(id__in=children).update(group_registration_id=result.id)
-            return Response(status=HTTP_201_CREATED)
-        else:
-            raise ValidationError({ "detail": create_serializer.errors })
-
+    permission_classes = [IsAuthenticated, HasTenantIdPermission]
+    serializer_class = GroupRegistrationInputSerializer
 
 @extend_schema(tags=['Group Registration'])
 class GroupRegistrationUpdateStatusView(NonDeletedFilterMixin, TenantFilterMixin, UpdateAPIView):
@@ -123,7 +110,7 @@ class GroupRegistrationRetrieveView(RetrieveAPIView, TenantFilterMixin, NonDelet
         
         # Add all child contracts to the returned data
         child_contracts = ChildContract.objects.filter(group_registration_id=instance.id)
-        data['child_contracts'] = ChildContractSerializer(child_contracts, many=True).data
+        data['child_contracts'] = ChildContractGroupSerializer(child_contracts, many=True).data
         
         return Response(data)
 
@@ -131,15 +118,14 @@ class GroupRegistrationRetrieveView(RetrieveAPIView, TenantFilterMixin, NonDelet
 class UpdateGroupRegistrationView(UpdateAPIView, TenantFilterMixin, NonDeletedFilterMixin):
     queryset = GroupRegistration.objects.all()
     permission_classes = [IsAuthenticated, HasTenantIdPermission]
-    serializer_class = CreateGroupRegistrationSerializer
+    serializer_class = GroupRegistrationInputSerializer
     lookup_field = 'id'
-    http_method_names = ['put']
 
 @extend_schema(tags=['Group Registration'])
 class GroupRegistrationBindChildContractsView(UpdateAPIView, TenantFilterMixin, NonDeletedFilterMixin):
     queryset = GroupRegistration.objects.all()
     permission_classes = [IsAuthenticated, HasTenantIdPermission]
-    serializer_class = ChildContractSerializer
+    serializer_class = ChildContractGroupSerializer
     http_method_names = ['put']
     
     def put(self, request, *args, **kwargs):
@@ -149,5 +135,5 @@ class GroupRegistrationBindChildContractsView(UpdateAPIView, TenantFilterMixin, 
         child_contract = ChildContract.objects.get(id=child_contract_id)
         child_contract.group_registration_id = registration.id
         child_contract.save()
-        serializer = ChildContractSerializer(child_contract)
+        serializer = ChildContractGroupSerializer(child_contract)
         return Response(serializer.data)

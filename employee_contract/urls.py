@@ -5,7 +5,7 @@ app_name="employee_contract"
 
 
 urlpatterns = [
-    path('list/', views.EmployeeContractListView.as_view(), name="employee-contract-list"),
+    path('', views.EmployeeContractListView.as_view(), name="employee-contract-list"),
     path('<int:id>/', views.EmployeeContractRetrieveDestroyView.as_view(), name="employee-contract-retrieve"),
     path('create/', views.HireEmployeeView.as_view(), name="employee-contract-hire"),
     path('<int:id>/hire/', views.ActivateEmployeeContractView.as_view(), name="employee-contract-hire"),

@@ -8,8 +8,10 @@ class BranchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Branch
         fields = '__all__'
+        
     
 class BranchInputSerializer(BaseModelInputSerializer):
-    class Meta:
+    class Meta(BaseModelInputSerializer.Meta):
         model = Branch
-        fields = '__all__'
+        exclude = ('company', 'is_deleted', )
+        

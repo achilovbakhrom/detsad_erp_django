@@ -26,7 +26,7 @@ class BranchRetrieveDestroyView(NonDeletedFilterMixin, TenantFilterMixin, generi
     lookup_field = 'id'
 
 @extend_schema(tags=['Branch'])
-class BranchEditView(NonDeletedFilterMixin, generics.UpdateAPIView):
+class BranchEditView(NonDeletedFilterMixin, TenantFilterMixin, generics.UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated, HasTenantIdPermission]
     queryset= Branch.objects.all()
     serializer_class = BranchInputSerializer

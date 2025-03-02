@@ -2,7 +2,7 @@ from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, R
 from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
-from child_contract.serializers import ChangeStatusSelrializer, CreateChildContractSerializer, ChildContractSerializer
+from child_contract.serializers import ChangeStatusSelrializer, ChildContractInputSerializer, ChildContractSerializer
 from core.mixins import NonDeletedFilterMixin, TenantFilterMixin
 from core.models import ChildContract
 from core.pagination import CustomPagination
@@ -22,17 +22,17 @@ class ChildContractListView(NonDeletedFilterMixin, TenantFilterMixin, ListAPIVie
     search_fields = ['child__first_name', 'child__last_name', 'child__middle_name', 'child__description']
     filterset_class = ChildContractFilter
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        date_from = self.request.query_params.get('date_from')
-        date_to = self.request.query_params.get('date_to')
-        if date_from and date_to:
-            queryset = queryset.filter(date__range=[date_from, date_to])
-        elif date_from:
-            queryset = queryset.filter(date__gte=date_from)
-        elif date_to:
-            queryset = queryset.filter(date__lte=date_to)
-        return queryset
+    # def get_queryset(self):
+    #     queryset = super().get_queryset()
+    #     date_from = self.request.query_params.get('date_from')
+    #     date_to = self.request.query_params.get('date_to')
+    #     if date_from and date_to:
+    #         queryset = queryset.filter(date__range=[date_from, date_to])
+    #     elif date_from:
+    #         queryset = queryset.filter(date__gte=date_from)
+    #     elif date_to:
+    #         queryset = queryset.filter(date__lte=date_to)
+    #     return queryset
 
 @extend_schema(tags=['Child Contract'])
 class ChildContractRetrieveDestroyView(RetrieveDestroyAPIView, NonDeletedFilterMixin, TenantFilterMixin):
@@ -45,7 +45,14 @@ class ChildContractRetrieveDestroyView(RetrieveDestroyAPIView, NonDeletedFilterM
 class CreateChildContractView(CreateAPIView, NonDeletedFilterMixin):
     permission_classes = [IsAuthenticated, HasTenantIdPermission]
     queryset = ChildContract.objects.all()
-    serializer_class = CreateChildContractSerializer
+    serializer_class = ChildContractInputSerializer
+
+@extend_schema(tags=['Child Contract'])
+class ChildContractEditView(UpdateAPIView, NonDeletedFilterMixin, TenantFilterMixin):
+    permission_classes = [IsAuthenticated, HasTenantIdPermission]
+    queryset = ChildContract.objects.all()
+    serializer_class = ChildContractInputSerializer
+    lookup_field = 'id'
 
 @extend_schema(tags=['Child Contract'])
 class ChildContractUpdateStatusView(UpdateAPIView, NonDeletedFilterMixin, TenantFilterMixin):

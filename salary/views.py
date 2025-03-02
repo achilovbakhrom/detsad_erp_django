@@ -1,97 +1,37 @@
-from jsonschema import ValidationError
-from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from drf_spectacular.utils import extend_schema
-from drf_spectacular.utils import OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
 
-from core.models import BaseUserCheck, Branch, Salary
+from core.mixins import NonDeletedFilterMixin, TenantFilterMixin
+from core.models import Salary
 from core.pagination import CustomPagination
-from salary.serializers import CreateSalarySerializer, SalaryListSerializer
-from rest_framework import status
-from core.utils import success_response, error_response
+from core.permissions import HasTenantIdPermission
+from salary.filters import SalaryFilter
+from salary.serializers import SalaryInputSerializer, SalaryListSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
-@extend_schema(
-    tags=['Salary'],
-    parameters=[
-        OpenApiParameter(
-            name="company_id",
-            required=True,
-            type=OpenApiTypes.STR,
-            location=OpenApiParameter.QUERY,
-            description="filter by company_id"
-        ),
-        OpenApiParameter(
-            name="branch_id",
-            required=False,
-            type=OpenApiTypes.STR,
-            location=OpenApiParameter.QUERY,
-            description="filter by branch_id"
-        ),
-    ]
-)
-class SalaryView(ListAPIView, BaseUserCheck):
-    permission_classes=[IsAuthenticated]
+@extend_schema(tags=['Salary'])
+class SalaryListView(ListAPIView, TenantFilterMixin, NonDeletedFilterMixin):
     queryset = Salary.objects.all()
     serializer_class = SalaryListSerializer
     pagination_class = CustomPagination
-
-    def get_queryset(self):
-        request = self.request
-        user_id = request.user.id
-        company_id = request.query_params.get('company_id', None)
-        (belongs, err_msg) = self.company_belongs_to_user(user_id=user_id, company_id=company_id)
-        if not belongs:
-            raise ValidationError({ "detail": err_msg })
-        
-        queryset = Salary.objects.filter(company_id=company_id)
-
-        return queryset
-
+    permission_classes = [IsAuthenticated, HasTenantIdPermission]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = SalaryFilter
+    search_fields = ['employee__employee__first_name', 'employee__employee__last_name', 'employee__employee__middle_name']
 
 @extend_schema(tags=['Salary'])
-class CreateSalaryView(CreateAPIView, BaseUserCheck):
+class SalaryRetrieveDestroyView(RetrieveDestroyAPIView, TenantFilterMixin, NonDeletedFilterMixin):
     queryset = Salary.objects.all()
-    permission_classes = [IsAuthenticated]
-    serializer_class = CreateSalarySerializer
+    permission_classes = [IsAuthenticated, HasTenantIdPermission]
+    serializer_class = SalaryListSerializer
+    lookup_field = 'id'
 
-    def post(self, request, *args, **kwargs):
-        user_id = request.user.id
-        body = request.data
-        company_id = body.get('company', None)
-        (belongs, err_msg) = self.company_belongs_to_user(user_id, company_id)
-        if not belongs:
-            raise ValidationError({ "detail": err_msg })
-        serializer = self.get_serializer(data=body)
-        if not serializer.is_valid():
-            return error_response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        if serializer.is_valid:
-            self.perform_create(serializer)
-
-        return success_response(serializer.data)
+@extend_schema(tags=['Salary'])
+class CreateSalaryView(CreateAPIView, NonDeletedFilterMixin):
+    queryset = Salary.objects.all()
+    permission_classes = [IsAuthenticated, HasTenantIdPermission]
+    serializer_class = SalaryInputSerializer
     
-@extend_schema(tags=['Salary'])
-class RetrieveSalaryView(RetrieveAPIView):
-    queryset = Salary.objects.all()
-    permission_classes = [IsAuthenticated]
-    serializer_class = SalaryListSerializer
-    lookup_field = 'id'
-
-@extend_schema(tags=['Salary'])
-class SalaryDeleteView(DestroyAPIView, BaseUserCheck):
-    queryset = Salary.objects.all()
-    permission_classes = [IsAuthenticated]
-    serializer_class = SalaryListSerializer
-    lookup_field = 'id'
-
-    def destroy(self, request, *args, **kwargs):
-        user_id = request.user.id
-        id = kwargs.get('id')
-        salary = Salary.objects.get(id=id)
-        company_id = salary.company.id
-        (belongs, err_msg) = self.company_belongs_to_user(user_id, company_id)
-        if not belongs:
-            raise ValidationError({ "detail": err_msg })
-        return super().destroy(request, *args, **kwargs)

@@ -2,17 +2,18 @@ from rest_framework import serializers
 
 from child.serializers import ChildSerializer
 from core.models import Branch, Child, ChildContract, GroupRegistration, PaymentType
+from core.serializers import BaseModelInputSerializer
 from group_registration.serializers import GroupRegistrationListSerializer
 from resources.serializers import PaymentTypeSerializer
 
-class CreateChildContractSerializer(serializers.ModelSerializer):
+class ChildContractInputSerializer(BaseModelInputSerializer):
     child = serializers.PrimaryKeyRelatedField(queryset = Child.objects.all(), required=True)
     payment_type = serializers.PrimaryKeyRelatedField(queryset = PaymentType.objects.all(), required=True)
-    group_registration = serializers.PrimaryKeyRelatedField(queryset = GroupRegistration.objects.all())
+    group_registration = serializers.PrimaryKeyRelatedField(queryset = GroupRegistration.objects.all(), required=False)
     branch = serializers.PrimaryKeyRelatedField(queryset = Branch.objects.all(), required=True)
     class Meta:
         model = ChildContract
-        fields = '__all__'
+        exclude = ('is_deleted', 'company', 'updated_by', 'created_by', 'created_at', 'updated_at',)
 
 class ChildContractSerializer(serializers.ModelSerializer):
     child = ChildSerializer()
@@ -24,7 +25,3 @@ class ChildContractSerializer(serializers.ModelSerializer):
 
 class ChangeStatusSelrializer(serializers.Serializer):
     status = serializers.CharField(required=True)
-
-    class Meta:
-        model = ChildContract
-        fields = '__all__'

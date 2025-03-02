@@ -14,4 +14,4 @@ class GroupSerializer(serializers.ModelSerializer):
 class GroupInputSerializer(BaseModelInputSerializer):
     class Meta:
         model = Group
-        fields = '__all__'
+        exclude = ('company', 'is_deleted', )

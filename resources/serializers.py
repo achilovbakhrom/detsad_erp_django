@@ -13,7 +13,7 @@ class PositionSerializer(serializers.ModelSerializer):
 class PositionInputSerializer(BaseModelInputSerializer):
     class Meta:
         model = Position
-        fields = '__all__'
+        exclude = ('company', 'is_deleted')
     
 
 class ReasonSerializer(serializers.ModelSerializer):
@@ -25,7 +25,7 @@ class ReasonSerializer(serializers.ModelSerializer):
 class ReasonInputSerializer(BaseModelInputSerializer):
     class Meta:
         model = Reason
-        fields = '__all__'
+        exclude = ('company', 'is_deleted')
 
 class DepartmentSerializer(serializers.ModelSerializer):
     company = CompanySerializer()
@@ -37,7 +37,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
 class DepartmentInputSerializer(BaseModelInputSerializer):
     class Meta:
         model = Department
-        fields = '__all__'
+        exclude = ('company', 'is_deleted')
 
 class PaymentTypeSerializer(serializers.ModelSerializer):
     company = CompanySerializer()
@@ -48,7 +48,7 @@ class PaymentTypeSerializer(serializers.ModelSerializer):
 class PaymentTypeInputSerializer(BaseModelInputSerializer):
     class Meta:
         model = PaymentType
-        fields = '__all__'
+        exclude = ('company', 'is_deleted')
 
 class AccountSerializer(serializers.ModelSerializer):
     company = CompanySerializer()
@@ -59,4 +59,4 @@ class AccountSerializer(serializers.ModelSerializer):
 class AccountInputSerializer(BaseModelInputSerializer):
     class Meta:
         model = Account
-        fields = '__all__'
+        exclude = ('company', 'is_deleted', 'created_by', 'updated_by', )

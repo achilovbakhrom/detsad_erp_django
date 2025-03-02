@@ -8,4 +8,5 @@ urlpatterns = [
     path('', views.ChildListView.as_view()),
     path('<int:id>/', views.ChildRetrieveDestroyView.as_view()),
     path('<int:id>/edit/', views.ChildEditView.as_view()),
+    path('create/', views.ChildCreateView.as_view()),
 ]

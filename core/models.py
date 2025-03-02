@@ -110,6 +110,9 @@ class EmployeeContract(SoftDelete, AuditableModel, PerCompanyModel):
 class Salary(AuditableModel, PerCompanyModel):
     date = models.DateTimeField(auto_now_add=True)
     employee = models.ForeignKey(EmployeeContract, null=True, on_delete=models.CASCADE, related_name="salaries")
+    payment_type = models.ForeignKey(PaymentType, null=True, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, null=True, on_delete=models.CASCADE)
+    amount = models.DecimalField(default=0.0, null=False, decimal_places=2, max_digits=15)
     description = models.CharField(max_length=255, null=True, default=None)
 
 class SickLeave(AuditableModel, PerCompanyModel):
@@ -128,6 +131,7 @@ class Transaction(AuditableModel, PerCompanyModel):
     payment_type = models.ForeignKey(PaymentType, null=False, on_delete=models.CASCADE)
     account = models.ForeignKey(Account, null=False, on_delete=models.CASCADE)
     description = models.CharField(max_length=255, null=True, default=None)
+    reason = models.ForeignKey(Reason, null=True, on_delete=models.CASCADE)
     child = models.ForeignKey(ChildContract, null=True, on_delete=models.CASCADE)
 
 class Subscription(AuditableModel, PerCompanyModel):

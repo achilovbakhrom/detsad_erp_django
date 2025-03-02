@@ -3,10 +3,11 @@ from rest_framework import serializers
 from branch.serializers import BranchSerializer
 from child.serializers import ChildSerializer
 from core.models import Branch, ChildContract, Group, GroupRegistration
+from core.serializers import BaseModelInputSerializer
 from group.serializers import GroupSerializer
 from resources.serializers import PaymentTypeSerializer
 
-class CreateGroupRegistrationSerializer(serializers.ModelSerializer):
+class GroupRegistrationInputSerializer(BaseModelInputSerializer):
     date = serializers.DateTimeField(required=True)
     group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all(), required=True)
     branch = serializers.PrimaryKeyRelatedField(queryset=Branch.objects.all(), required=True)
@@ -14,7 +15,7 @@ class CreateGroupRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GroupRegistration
-        fields = '__all__'
+        exclude = ('is_deleted', 'company', 'updated_by', 'created_by', 'created_at', 'updated_at',)
 
     def create(self, validated_data):
         children = validated_data.pop('children', [])
@@ -26,7 +27,7 @@ class CreateGroupRegistrationSerializer(serializers.ModelSerializer):
             child_contract.save()
         return group_registration
 
-class ChildContractSerializer(serializers.ModelSerializer):
+class ChildContractGroupSerializer(serializers.ModelSerializer):
     child = ChildSerializer()
     payment_type = PaymentTypeSerializer()
     class Meta:
@@ -36,7 +37,7 @@ class ChildContractSerializer(serializers.ModelSerializer):
 class GroupRegistrationListSerializer(serializers.ModelSerializer):
     group = GroupSerializer()
     branch = BranchSerializer()
-    child_contracts = ChildContractSerializer(many=True, read_only=True, source='childcontract_set')
+    child_contracts = ChildContractGroupSerializer(many=True, read_only=True, source='childcontract_set')
 
     class Meta:
         model = GroupRegistration

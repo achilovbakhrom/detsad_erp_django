@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 from core.permissions import HasTenantIdPermission
 
 @extend_schema(tags=["Subscription"])
-class SubscriptionListView(NonDeletedFilterMixin, TenantFilterMixin, generics.ListAPIView):
+class SubscriptionListView(TenantFilterMixin, generics.ListAPIView):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
     pagination_class = CustomPagination
@@ -43,14 +43,14 @@ class SubscriptionListView(NonDeletedFilterMixin, TenantFilterMixin, generics.Li
         return queryset
     
 @extend_schema(tags=["Subscription"])
-class SubscriptionRetrieveDestroyView(NonDeletedFilterMixin, TenantFilterMixin, generics.RetrieveDestroyAPIView):
+class SubscriptionRetrieveDestroyView(TenantFilterMixin, generics.RetrieveDestroyAPIView):
     queryset = Subscription.objects.all()
     permission_classes=[IsAuthenticated, HasTenantIdPermission]
     serializer_class = SubscriptionSerializer
     lookup_field = "id"
 
 @extend_schema(tags=["Subscription"])
-class CreateSubscriptionView(generics.CreateAPIView, NonDeletedFilterMixin):
+class CreateSubscriptionView(generics.CreateAPIView):
     queryset = Subscription.objects.all()
     permission_classes=[IsAuthenticated, HasTenantIdPermission]
     serializer_class = SubscriptionInputSerializer

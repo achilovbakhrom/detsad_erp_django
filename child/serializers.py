@@ -14,4 +14,4 @@ class ChildSerializer(serializers.ModelSerializer):
 class ChildInputSerializer(BaseModelInputSerializer):
     class Meta:
         model = Child
-        fields = '__all__'
+        exclude = ('company', 'is_deleted', )

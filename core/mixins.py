@@ -1,5 +1,3 @@
-from core.permissions import get_tenant_id
-
 
 class NonDeletedFilterMixin:
 
@@ -23,6 +21,6 @@ class TenantFilterMixin:
         if hasattr(queryset, 'active'):
             return queryset.active()
         
-        company_id = get_tenant_id(self.request)
-
-        return queryset.filter(company_id=company_id)
+        print(self.request.tenant_id)
+        
+        return queryset.filter(company_id=self.request.tenant_id)

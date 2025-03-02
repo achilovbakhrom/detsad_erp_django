@@ -32,6 +32,8 @@ class HasTenantIdPermission(BasePermission):
         
         user_id = request.user.id
 
+        request.tenant_id = company_id
+
         (belongs, _) = company_belongs_to_user(user_id, company_id)
         if not belongs:
             raise TenantAccessDenied()

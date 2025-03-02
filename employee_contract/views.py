@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from core.pagination import CustomPagination
 from core.permissions import HasTenantIdPermission
 from employee_contract.filters import EmployeeContractFilter
-from employee_contract.serializers import EmployeeContractSerializer, CreateEmployeeContractSerializer
+from employee_contract.serializers import EmployeeContractSerializer, EmployeeContractInputSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 
@@ -58,7 +58,7 @@ class EmployeeContractRetrieveDestroyView(NonDeletedFilterMixin, TenantFilterMix
 class HireEmployeeView(generics.CreateAPIView, NonDeletedFilterMixin):
     queryset = EmployeeContract.objects.all()
     permission_classes=[IsAuthenticated, HasTenantIdPermission]
-    serializer_class=CreateEmployeeContractSerializer
+    serializer_class=EmployeeContractInputSerializer
 
 @extend_schema(tags=['Employee Contract'])
 class ActivateEmployeeContractView(generics.UpdateAPIView, NonDeletedFilterMixin, TenantFilterMixin):
@@ -81,7 +81,11 @@ class ActivateEmployeeContractView(generics.UpdateAPIView, NonDeletedFilterMixin
 
         return Response(seralizer.data)
 
-    
+@extend_schema(tags=['Employee Contract'])
+class DeactivateEmployeeContractView(generics.UpdateAPIView, NonDeletedFilterMixin, TenantFilterMixin):
+    queryset = EmployeeContract.objects.all()
+    serializer_class = EmployeeContractSerializer
+    lookup_field = 'id'
 
 @extend_schema(tags=['Employee Contract'])
 class FireEmployeeView(generics.DestroyAPIView):
