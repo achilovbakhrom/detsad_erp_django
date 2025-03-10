@@ -48,6 +48,7 @@ class GroupRegistrationDestroyView(DestroyAPIView, NonDeletedFilterMixin, Tenant
     queryset = GroupRegistration.objects.all()
     permission_classes = [IsAuthenticated, HasTenantIdPermission]
     serializer_class = GroupRegistrationListSerializer
+    lookup_field = ['id']
 
     def perform_destroy(self, instance):
         related_contracts = ChildContract.objects.filter(group_registration_id=instance.id)

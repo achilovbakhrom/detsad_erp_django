@@ -7,7 +7,6 @@ from core.serializers import BaseModelInputSerializer
 from resources.serializers import AccountSerializer, PaymentTypeSerializer
 
 class TransactionSerializer(serializers.ModelSerializer):
-    child = ChildContractSerializer()
     company = CompanySerializer()
     payment_type = PaymentTypeSerializer()
     account = AccountSerializer()
@@ -19,7 +18,6 @@ class TransactionSerializer(serializers.ModelSerializer):
 
 class TransactionInputSerializer(BaseModelInputSerializer):
     date = serializers.DateTimeField(required=True)
-    child = serializers.PrimaryKeyRelatedField(queryset=ChildContract.objects.all(), required=False)
     payment_type = serializers.PrimaryKeyRelatedField(queryset=PaymentType.objects.all(), required=True)
     account = serializers.PrimaryKeyRelatedField(queryset=Account.objects.all(), required=True)
     reason = serializers.PrimaryKeyRelatedField(queryset=Reason.objects.all(), required=False)

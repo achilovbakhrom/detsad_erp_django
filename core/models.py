@@ -125,14 +125,16 @@ class Transaction(AuditableModel, PerCompanyModel):
     class TransactionType(models.TextChoices):
         INCOME = 'income', 'Income'
         EXPENSE = 'expense', 'Expense'
-        SUBSCRIPTION = 'subscription', 'Subscription'
+    transaction_type = models.CharField(
+        choices=TransactionType.choices,
+        default=TransactionType.EXPENSE
+    )
     date = models.DateTimeField(auto_now_add=True)
     amount = models.DecimalField(default=0.0, decimal_places=2, max_digits=10)
     payment_type = models.ForeignKey(PaymentType, null=False, on_delete=models.CASCADE)
     account = models.ForeignKey(Account, null=False, on_delete=models.CASCADE)
     description = models.CharField(max_length=255, null=True, default=None)
     reason = models.ForeignKey(Reason, null=True, on_delete=models.CASCADE)
-    child = models.ForeignKey(ChildContract, null=True, on_delete=models.CASCADE)
 
 class Subscription(AuditableModel, PerCompanyModel):
     date = models.DateTimeField(auto_now_add=True)

@@ -1,7 +1,7 @@
 from rest_framework import generics
 from drf_spectacular.utils import extend_schema
 
-from core.mixins import NonDeletedFilterMixin, TenantFilterMixin
+from core.mixins import TenantFilterMixin
 from core.models import Subscription
 from core.pagination import CustomPagination
 from subscription.filters import SubscriptionFilter

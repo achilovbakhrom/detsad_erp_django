@@ -25,24 +25,24 @@ class AccountsFinance(APIView, BaseUserCheck):
             raise ValidationError(err)
         
         # Combine salary, transaction, and subscription data in a single query
-        balance_data = (
-            Salary.objects.filter(company_id=company_id).values("account", "payment_type").annotate(total=Sum("amount"))
-            .union(Transaction.objects.filter(company_id=company_id).values("account", "payment_type").annotate(total=Sum("amount")))
-            .union(Subscription.objects.filter(company_id=company_id).values("account", "payment_type").annotate(total=Sum("amount")))
-        )
+        salary_data = Salary.objects.filter(company_id=company_id).values("account", "payment_type").annotate(total=Sum("amount"))
+        transaction_data = Transaction.objects.filter(company_id=company_id).values("account", "payment_type").annotate(total=Sum("amount"))
+        subscription_data = Subscription.objects.filter(company_id=company_id).values("account", "payment_type").annotate(total=Sum("amount"))
 
         balance_map = {}
+        balance_data = list(salary_data) + list(transaction_data) + list(subscription_data)
         for data in balance_data:
             key = (data["account"], data["payment_type"])
-        balance = []
-
-        for (acc, pay_type), amount in balance_map.items():
-            balance.append({
+            balance_map[key] = balance_map.get(key, 0) + data["total"]
+        
+        balance = [
+            {
                 "account": Account.objects.get(id=acc),
                 "payment_type": PaymentType.objects.get(id=pay_type),
                 "balance": amount,
-            })
-
+            }
+            for (acc, pay_type), amount in balance_map.items()
+        ]
 
         transactions = []
 

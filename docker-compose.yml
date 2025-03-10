@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: detsad_erp
+      POSTGRES_USER: detsad_erp
+      POSTGRES_PASSWORD: d315ad_3r9
+    networks:
+      - app-network
+
+  web:
+    build: .
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DEBUG: "True"
+      SECRET_KEY: 5ecre1_ke11
+      DJANGO_ALLOWED_HOSTS: localhost 127.0.0.1 [::1]
+      DATABASE_URL: postgres://detsad_erp:d315ad_3r9@db:5432/detsad_erp
+      DJANGO_SUPERUSER_USERNAME: "admin"
+      DJANGO_SUPERUSER_PASSWORD: "admin123"
+      DJANGO_SUPERUSER_EMAIL: "admin@example.com"
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ../detsad_erp_angular  # This points to the front-end app Dockerfile location
+    ports:
+      - "4200:80"  # Exposing port 3000 for the front-end
+    depends_on:
+      - web  # Depends on the web service (optional)
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  static_volume:

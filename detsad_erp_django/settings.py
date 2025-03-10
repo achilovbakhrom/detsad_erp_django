@@ -15,7 +15,7 @@ from pathlib import Path
 import dj_database_url
 from datetime import timedelta
 from dotenv import load_dotenv
-
+from corsheaders.defaults import default_headers
 
 load_dotenv()
 
@@ -71,15 +71,20 @@ MIDDLEWARE = [
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://muslim-api.sies.uz',
     # Add other domains if necessary
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'http://localhost:4200',
 ]
 
 
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS=True
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'X-TENANT-ID',
+    'x-tenant-id',
+]
 
 ROOT_URLCONF = 'detsad_erp_django.urls'
 
